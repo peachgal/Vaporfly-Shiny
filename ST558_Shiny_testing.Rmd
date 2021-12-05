@@ -95,7 +95,7 @@ set.seed(388588)
 shoes <- shoe
 shoes_data <- shoes %>% filter(vaporfly != "NA")
 # sum(is.na(shoes$age))
-# shoes$year <- cut(shoes$year, 5, c("2015", "2016", "2017", "2018", "2019"))
+shoes_data$year <- cut(shoes_data$year, 5, c("2015", "2016", "2017", "2018", "2019"))
 dummies <- dummyVars( ~ vaporfly + sex + year + marathon, data = shoes_data)
 dummy_var <- predict(dummies, newdata = shoes_data)
 as_tibble(dummy_var)
@@ -139,22 +139,23 @@ testTrans3 <- testTransformed %>% select(-name_age, -match_name, -full_name, -ma
                                          -time, -vaporfly, -sex, -age)
 colnames(trainTrans3) <- make.names(colnames(trainTrans3))
 colnames(testTrans3) <- make.names(colnames(testTrans3))
-
-regress_tree <- train(time_minutes ~ . , data = trainTrans3, 
+trainTrans4 <- trainTrans1 %>% select(-age, -match_name)
+testTrans4 <- testTrans1 %>% select(-age, -match_name)
+regress_tree <- train(time_minutes ~ . , data = trainTrans4, 
                       method = "rpart", 
                       trControl = trainControl(method = "cv", number = 10),
-                      #preProcess = c("center", "scale"),
+                      preProcess = c("center", "scale"),
                       #tuneLength = 30)
                       tuneGrid = data.frame(cp = seq(from = 0.0010, to = 0.0013, by = 0.00001)))
 regress_tree
 
-pred_reg.tree.train <- predict(regress_tree, newdata = trainTrans3)
-pred_reg.tree <- predict(regress_tree, newdata = testTrans3)
+pred_reg.tree.train <- predict(regress_tree, newdata = trainTrans4)
+pred_reg.tree <- predict(regress_tree, newdata = testTrans4)
 
-reg.tree.train_rmse <- postResample(pred_reg.tree.train, obs = trainTrans3$time_minutes)
-reg.tree_rmse <- postResample(pred_reg.tree, obs = testTrans3$time_minutes)
+reg.tree.train_rmse <- postResample(pred_reg.tree.train, obs = trainTrans4$time_minutes)
+reg.tree.test_rmse <- postResample(pred_reg.tree, obs = testTrans4$time_minutes)
 reg.tree.train_rmse
-reg.tree_rmse
+reg.tree.test_rmse
 plot(regress_tree$finalModel, uniform = TRUE, main = "Regression Tree Fit")
 text(regress_tree$finalModel, digits = 3, all = TRUE, use.n = TRUE)
 
@@ -173,7 +174,7 @@ testTrans3 <- testTransformed %>% select(-name_age, -match_name, -full_name, -ma
 #testTrans3
 random_f <- train(time_minutes ~ . , data = trainTrans3,
       method = "rf",
-      trControl = trainControl(method = "repeatedcv", number = 5, repeats = 3),
+      trControl = trainControl(method = "cv", number = 5), #"repeatedcv", number = 5, repeats = 3
       #preProcess = c("center", "scale"),
       tuneGrid = data.frame(mtry = 3:8))
 random_f

@@ -11,6 +11,7 @@ library(shiny)
 library(tidyverse)
 library(caret)
 library(DT)
+library(vip)
 
 shoe <- read_csv(file = "sampled_shoe.csv", col_names = TRUE)
 shoe <- data.frame(shoe) 
@@ -265,7 +266,48 @@ shinyServer(function(input, output) {
     
 ####################### Regression Tree ###################################################    
     
+    output$regress.tree_fit <- renderPrint({
+        
+        set.seed(388588)
+        
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        train <- shoes_data[vaporfly_index, ]
+        test <- shoes_data[-vaporfly_index, ]
+        
+        regress_tree <- train(time_minutes ~ . , 
+                              data = train, 
+                              method = "rpart", 
+                              trControl = trainControl(method = "cv", number = 10),
+                              preProcess = c("center", "scale"),
+                              #tuneLength = 30)
+                              tuneGrid = data.frame(cp = seq(from = input$cp[1], to = input$cp[2], by = 0.00001)))
+        regress_tree
+
+    })
     
+    output$regress.tree_rmse <- renderDataTable({
+        
+        set.seed(388588)
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        train <- shoes_data[vaporfly_index, ]
+        test <- shoes_data[-vaporfly_index, ]
+        
+        regress_tree <- train(time_minutes ~ . , 
+                              data = train, 
+                              method = "rpart", 
+                              trControl = trainControl(method = "cv", number = 10),
+                              preProcess = c("center", "scale"),
+                              #tuneLength = 30)
+                              tuneGrid = data.frame(cp = seq(from = input$cp[1], to = input$cp[2], by = 0.00001)))
+        
+        pred_reg.tree.train <- predict(regress_tree, newdata = train)
+        pred_reg.tree <- predict(regress_tree, newdata = test)
+        reg.tree.train_rmse <- postResample(pred_reg.tree.train, obs = train$time_minutes)
+        reg.tree.test_rmse <- postResample(pred_reg.tree, obs = test$time_minutes)
+        reg.tree_table <- rbind(reg.tree.train_rmse, reg.tree.test_rmse)
+        row.names(reg.tree_table) <- c("Training set", "Test set")
+        round(reg.tree_table, 4)
+    })
     
     
     
@@ -281,42 +323,17 @@ shinyServer(function(input, output) {
         train <- shoes_data[vaporfly_index, ]
         test <- shoes_data[-vaporfly_index, ]
         
-        #mlr_fit <- train(time_minutes ~ . , 
-        #                 data=train,
-        #                 method = "lm",
-        #                 trControl = trainControl(method = "cv", number = 10),
-        #                 preProcess = c("center", "scale"))
-        
-        #random_f <- train(time_minutes ~ . , data = trainTrans3,
-        #                  method = "rf",
-        #                  trControl = trainControl(method = "cv", number = 5),
-        #                  #preProcess = c("center", "scale"),
-        #                  tuneGrid = data.frame(mtry = 3:8))
-        #random_f
-        #pred_rf <- predict(random_f, newdata = testTrans3)
-        #rf_rmse <- postResample(pred_rf, obs = testTrans3$time_minutes)
-        #rf_rmse
-        #varImp(random_f)
-        #vip(random_f)
-        
         random_f <- train(time_minutes ~ . , data = train,
                           method = "rf",
                           trControl = trainControl(method = "cv", number = 5),
                           preProcess = c("center", "scale"),
                           tuneGrid = data.frame(mtry = input$mtry[1]:input$mtry[2]))
-        #random_f
-        #train_pred_rf <- predict(random_f, newdata = train)
-        #test_pred_rf <- predict(random_f, newdata = test)
-        #train_rf_rmse <- postResample(train_pred_rf, obs = train$time_minutes)
-        #test_rf_rmse <- postResample(test_pred_rf, obs = test$time_minutes)
-        #rf_table <- rbind(train_rf_rmse, test_rf_rmse)
-        #row.names(rf_table) <- c("Training set", "Test set")
-        #round(rf_table, 4)
-        varImp(random_f)
-        #vip(random_f)
+
+        vip(random_f)
+
         
     })
-    output$rf.rmse <- renderPrint({
+    output$rf.rmse <- renderDataTable({
         
         set.seed(388588)
         

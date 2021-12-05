@@ -135,8 +135,28 @@ shinyUI(
                                      
                                  )
                              ),
-                             tabPanel("Regression Tree", fluid = TRUE
+                             tabPanel("Regression Tree", fluid = TRUE,
                                  
+                                      sidebarLayout(
+                                          sidebarPanel(
+                                              sliderInput("cp",
+                                                          "Tuning parameter - cp",
+                                                          min = 0.0008,
+                                                          max = 0.0013,
+                                                          value = c(0.001, 0.0013),
+                                                          step = 0.00001),
+                                              # checkboxInput("mlr_year", "Add one more predictor - Year?"),
+                                              actionButton("submit_rt", "Submit")
+                                          ),
+                                          # Show a plot of the generated distribution
+                                          mainPanel(
+                                              #plotOutput("rf.varimportance"),
+                                              verbatimTextOutput("regress.tree_fit"),
+                                              dataTableOutput("regress.tree_rmse")
+                                          )
+                                          
+                                      )
+                                      
                              ),
                              tabPanel("Random Forest", fluid = TRUE,
                                  sidebarLayout(
