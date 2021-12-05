@@ -16,6 +16,9 @@ library(vip)
 shoe <- read_csv(file = "sampled_shoe.csv", col_names = TRUE)
 shoe <- data.frame(shoe) 
 shoes_data <- shoe %>% filter(vaporfly != "NA") %>% select(marathon, year, vaporfly, time_minutes, sex)
+shoes_data$year <- cut(shoes_data$year, 5, c("2015", "2016", "2017", "2018", "2019"))
+shoes_data$vaporfly <- as.numeric(shoes_data$vaporfly)
+shoes_data$vaporfly <- cut(shoes_data$vaporfly, 2, c("No", "Yes"))
 # sum(is.na(shoes$age))
 # shoes$year <- cut(shoes$year, 5, c("2015", "2016", "2017", "2018", "2019"))
 
@@ -355,12 +358,50 @@ shinyServer(function(input, output) {
         rf_table <- rbind(train_rf_rmse, test_rf_rmse)
         row.names(rf_table) <- c("Training set", "Test set")
         round(rf_table, 4)
-        #varImp(random_f)
-        #vip(random_f)
 
     })
     
-    
+############################## Prediction ##################################################################    
+    output$prediction <- renderText( {
+        
+        shoes_data
+        if(input$fit_model == "Random Forest"){
+            
+            pred_fit <- train(time_minutes ~ . , data = shoes_data,
+                              method = "rf",
+                              trControl = trainControl(method = "cv", number = 5), #"repeatedcv", number = 5, repeats = 3
+                              #preProcess = c("center", "scale"),
+                              tuneGrid = data.frame(mtry = 3:8))
+            pred_fit
+            
+        } else if(input$fit_model == "Regression Tree"){
+            
+            pred_fit <- train(time_minutes ~ . , data = shoes_data, 
+                                  method = "rpart", 
+                                  trControl = trainControl(method = "cv", number = 10),
+                                  #preProcess = c("center", "scale"),
+                                  tuneGrid = data.frame(cp = seq(from = 0.0010, to = 0.0013, by = 0.00001)))
+            pred_fit
+            
+        } else {
+            
+            pred_fit <- train(time_minutes ~ vaporfly + sex + marathon + year, 
+                             data=shoes_data,
+                             method = "lm",
+                             trControl = trainControl(method = "cv", number = 10))
+            pred_fit
+            
+        }
+        
+        temp <- predict(pred_fit, 
+                        newdata = data.frame(sex = input$pred_sex, 
+                                             vaporfly = input$pred_vaporfly, 
+                                             year = input$pred_year, 
+                                             marathon = input$pred_mara), 
+                        se.fit = TRUE)
+        paste("The average running time of the marathon runner is", round(temp, 2), "minutes.", sep = " ")
+        
+    })
 ################################ DATA page ##########################################################    
     getData <- reactive({
         

@@ -14,6 +14,9 @@ library(DT)
 shoe <- read_csv(file = "sampled_shoe.csv", col_names = TRUE)
 shoe <- data.frame(shoe)
 shoes_data <- shoe %>% filter(vaporfly != "NA") %>% select(marathon, year, vaporfly, time_minutes, sex)
+shoes_data$year <- cut(shoes_data$year, 5, c("2015", "2016", "2017", "2018", "2019"))
+shoes_data$vaporfly <- as.numeric(shoes_data$vaporfly)
+shoes_data$vaporfly <- cut(shoes_data$vaporfly, 2, c("No", "Yes"))
 predictors <- c("marathon", "year", "vaporfly", "sex")
 shoes_data <- data.frame(shoes_data)
 
@@ -182,7 +185,39 @@ shinyUI(
                              )
                          )
                      ),
-                     tabPanel("Prediction", fluid = TRUE
+############################################ Prediction #######################################################
+
+                     tabPanel("Prediction", fluid = TRUE,
+                              sidebarLayout(
+                                  sidebarPanel(
+                                      h4("Select the type of model for predicting runtime of "),
+                                      radioButtons("fit_model", label = "Select the Model:", 
+                                                   choices = c("Multiple Linear Regression", 
+                                                               "Regression Tree", 
+                                                               "Random Forest"),
+                                                   selected = character(0)),
+                                      h4("Select predictors' values to predict for marathon runners' average run-time in minutes:"),
+                                      selectInput("pred_sex", label = "Gender",
+                                                  choices = unique(shoes_data$sex), 
+                                                  selected = character(0)),
+                                      selectInput("pred_year", label = "Year",
+                                                  choices = unique(shoes_data$year),
+                                                  selected = character(0)),
+                                      selectInput("pred_vaporfly", label = "Vaporfly shoes",
+                                                  choices = unique(shoes_data$vaporfly),
+                                                  selected = "Yes"),
+                                      selectInput("pred_mara", label = "Marathon", 
+                                                  choices = unique(shoes_data$marathon),
+                                                  selected = "Boston Marathon"),
+                                      actionButton("submit_model", "Predict!")
+                                      # line break
+                                  ),
+                                  mainPanel(
+                                      #plotOutput("rf.varimportance"),
+                                      #verbatimTextOutput("rf.fit"),
+                                      textOutput("prediction")
+                                  )
+                              )
                       
                      )
                      

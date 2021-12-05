@@ -96,6 +96,9 @@ shoes <- shoe
 shoes_data <- shoes %>% filter(vaporfly != "NA")
 # sum(is.na(shoes$age))
 shoes_data$year <- cut(shoes_data$year, 5, c("2015", "2016", "2017", "2018", "2019"))
+shoes_data$vaporfly <- as.numeric(shoes_data$vaporfly)
+shoes_data$vaporfly <- cut(shoes_data$vaporfly, 2, c("No", "Yes"))
+shoes_data
 dummies <- dummyVars( ~ vaporfly + sex + year + marathon, data = shoes_data)
 dummy_var <- predict(dummies, newdata = shoes_data)
 as_tibble(dummy_var)
@@ -112,20 +115,21 @@ testTransformed <- predict(preProcValues, test)
 trainTrans1 <- trainTransformed %>% select(match_name, marathon, year, time_minutes, vaporfly, sex, age)
 testTrans1 <- testTransformed %>% select(match_name, marathon, year, time_minutes, vaporfly, sex, age)
 trainTrans1
-cv_fit1 <- train(time_minutes ~ vaporfly + sex + marathon + year + # match_name + 
-                   vaporfly:sex + sex:marathon + vaporfly:year + marathon:year, 
-                 data=trainTrans1,
+cv_fit1 <- train(time_minutes ~ vaporfly + sex + marathon + year, #+ # match_name + 
+                   #vaporfly:sex + sex:marathon + vaporfly:year + marathon:year, 
+                 data=train,
                  method = "lm",
                  trControl = trainControl(method = "cv", number = 10))
-summary(cv_fit1)
+#summary(cv_fit1)
 
-pred1 <- predict(cv_fit1, newdata = testTrans1)
-train_pred1 <- predict(cv_fit1, newdata = trainTrans1)
-cv_train_rmse1 <- postResample(train_pred1, obs = trainTrans1$time_minutes)
-cv_rmse1 <- postResample(pred1, obs = testTrans1$time_minutes)
-cv_train_rmse1
-cv_rmse1
+#pred1 <- predict(cv_fit1, newdata = testTrans1)
+#train_pred1 <- predict(cv_fit1, newdata = trainTrans1)
+#cv_train_rmse1 <- postResample(train_pred1, obs = trainTrans1$time_minutes)
+#cv_rmse1 <- postResample(pred1, obs = testTrans1$time_minutes)
+#cv_train_rmse1
+#cv_rmse1
 
+temp <- predict(cv_fit1, newdata = data.frame(sex = "Female", vaporfly = "Yes", year = "2015", marathon = "Boston Marathon"),         se.fit = TRUE)
 ```
 
 ## Regression Tree or Classification Tree
