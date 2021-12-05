@@ -18,8 +18,11 @@ When you click the **Knit** button a document will be generated that includes bo
 ```{r eval=TRUE}
 library(tidyverse)
 
-shoes <- read_csv(file = "_Data/sampled_shoe.csv", col_names = TRUE)
-shoes
+shoe <- read_csv(file = "_Data/sampled_shoe.csv", col_names = TRUE)
+shoe
+
+shoes_data <- shoe %>% filter(vaporfly != "NA") %>% select(marathon, year, vaporfly, time_minutes, sex)
+shoes_data <- data.frame(shoes_data)
 #sum(is.na(shoes$time_minutes))
 ```
 
@@ -87,7 +90,9 @@ train obs = 1133, test = 500 something
 
 ```{r eval=TRUE}
 library(caret)
-#set.seed(388588)
+library(tidyverse)
+set.seed(388588)
+shoes <- shoe
 shoes_data <- shoes %>% filter(vaporfly != "NA")
 # sum(is.na(shoes$age))
 # shoes$year <- cut(shoes$year, 5, c("2015", "2016", "2017", "2018", "2019"))
@@ -95,8 +100,8 @@ dummies <- dummyVars( ~ vaporfly + sex + year + marathon, data = shoes_data)
 dummy_var <- predict(dummies, newdata = shoes_data)
 as_tibble(dummy_var)
 shoes_all <- cbind(dummy_var, shoes_data)
+colnames(shoes_all) <- make.names(colnames(shoes_all))
 shoes_all
-
 sexIndex <- createDataPartition(shoes_all$sex, p = 0.7, list = FALSE)
 train <- shoes_all[sexIndex, ]
 test <- shoes_all[-sexIndex, ]
@@ -140,7 +145,7 @@ regress_tree <- train(time_minutes ~ . , data = trainTrans3,
                       trControl = trainControl(method = "cv", number = 10),
                       #preProcess = c("center", "scale"),
                       #tuneLength = 30)
-                      tuneGrid = data.frame(cp = seq(from = 0.001, to = 0.002, by = 0.00001)))
+                      tuneGrid = data.frame(cp = seq(from = 0.0010, to = 0.0013, by = 0.00001)))
 regress_tree
 
 pred_reg.tree.train <- predict(regress_tree, newdata = trainTrans3)
@@ -150,8 +155,8 @@ reg.tree.train_rmse <- postResample(pred_reg.tree.train, obs = trainTrans3$time_
 reg.tree_rmse <- postResample(pred_reg.tree, obs = testTrans3$time_minutes)
 reg.tree.train_rmse
 reg.tree_rmse
-plot(regress$finalModel, uniform = TRUE, main = "Regression Tree Fit")
-text(regress$finalModel, digits = 3, all = TRUE, use.n = TRUE)
+plot(regress_tree$finalModel, uniform = TRUE, main = "Regression Tree Fit")
+text(regress_tree$finalModel, digits = 3, all = TRUE, use.n = TRUE)
 
 ```
 

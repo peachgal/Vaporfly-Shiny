@@ -8,11 +8,15 @@
 #
 
 library(shiny)
+library(DT)
 #library(shinydashboard)
 
 shoe <- read_csv(file = "sampled_shoe.csv", col_names = TRUE)
 shoe <- data.frame(shoe)
 shoes_data <- shoe %>% filter(vaporfly != "NA") %>% select(marathon, year, vaporfly, time_minutes, sex)
+predictors <- c("marathon", "year", "vaporfly", "sex")
+shoes_data <- data.frame(shoes_data)
+
 # Define UI for application that draws a histogram
 shinyUI(
     fluidPage(
@@ -110,18 +114,23 @@ shinyUI(
                                          #             "Plot Type:",
                                          #             choices = c("Scatterplot", "Histogram", "Barplot"),
                                          #             selected = "Scatterplot"),
-                                         selectInput("mlr_x", 
-                                                     "Select the predictors:",
-                                                     multiple = TRUE,
-                                                     choices = as.list(shoes_data[, -4]), #c("vaporfly", "marathon", "year", "sex"),
-                                                     selected = shoes_data[, 3],
-                                                     selectize = TRUE)
+                                         #selectInput("mlr_x", 
+                                         #            "Select the predictors:",
+                                         #            choices = as.list(shoes_data[-4]), #c("vaporfly", "marathon", "year", "sex"),
+                                         #            selected = shoes_data[3],
+                                         #            multiple = TRUE),
+                                         #varSelectInput("mlr_x", label = "Select the predictors:", 
+                                         #               choices = as.list(shoes_data[-4]),
+                                         #               selected = shoes_data[3],
+                                         #               multiple = TRUE),
+                                         checkboxInput("mlr_year", "Add one more predictor - Year?"),
+                                         actionButton("submit_mlr", "Submit")
                                      ),
                                      # Show a plot of the generated distribution
                                      mainPanel(
                                          #plotOutput("distPlot"),
-                                         verbatimTextOutput("mlrfit")
-                                         #dataTableOutput("summarytable")
+                                         verbatimTextOutput("mlrfit"),
+                                         dataTableOutput("mlr_rmse")
                                      )
                                      
                                  )
@@ -129,7 +138,26 @@ shinyUI(
                              tabPanel("Regression Tree", fluid = TRUE
                                  
                              ),
-                             tabPanel("Random Forest", fluid = TRUE
+                             tabPanel("Random Forest", fluid = TRUE,
+                                 sidebarLayout(
+                                     sidebarPanel(
+                                         sliderInput("mtry",
+                                                     "Tuning parameter - mtry",
+                                                     min = 3,
+                                                     max = 8,
+                                                     value = c(4, 6),
+                                                     step = 1),
+                                         # checkboxInput("mlr_year", "Add one more predictor - Year?"),
+                                         actionButton("submit_rf", "Submit")
+                                         ),
+                                     # Show a plot of the generated distribution
+                                     mainPanel(
+                                         plotOutput("rf.varimportance"),
+                                         #verbatimTextOutput("rf.fit"),
+                                         dataTableOutput("rf.rmse")
+                                     )
+                                          
+                                 )
                                  
                              )
                          )

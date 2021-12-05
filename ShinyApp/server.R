@@ -118,30 +118,97 @@ shinyServer(function(input, output) {
         }
         
     })
-    shoes_data <- shoe %>% filter(vaporfly != "NA") %>% select(marathon, year, vaporfly, time_minutes, sex)
     
-    mlr_data <- reactiveValues({
+######################## Multiple Linear Regression ###########################################
+    
+     #shoes_data <- shoe %>% filter(vaporfly != "NA") %>% select(marathon, year, vaporfly, time_minutes, sex)
+     # <- reactive({
+     #  newData <- shoes_data %>% select(input$mlr_x, time_minutes)})
+    #mlr_data <- reactive({ #input$submit_mlr,
+    #    set.seed(388588)
+        
+        #if(input$mlr_year){
+        #    
+        #    newData <- shoes_data
+        #    newData
+        #    
+        #} else {
+        #    
+        #    newData <- shoes_data %>% select(-year)
+        #    newData
+        #}
+        
+        #newData <- shoes_data %>% select(!!!input$mlr_x, time_minutes) 
+    
+        #newData <- mlr_data()$newData
+        
+        #vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        #train <- shoes_data[vaporfly_index, ]
+        #test <- shoes_data[-vaporfly_index, ]
+    
+        #mlr_fit <- train(time_minutes ~ . , 
+        #                 data=train,
+        #                 method = "lm",
+        #                 trControl = trainControl(method = "cv", number = 10),
+        #                 preProcess = c("center", "scale"))
+        #mlr_summ <- summary(mlr_fit)
+        #test_pred_mlr <- predict(mlr_fit, newdata = mlr_data$test)
+        #train_pred_mlr <- predict(cv_fit1, newdata = mlr_data$train)
+        #train_rmse_mlr <- postResample(train_pred_mlr, obs = mlr_data$train$time_minutes)
+        #test_rmse_mlr <- postResample(test_pred_mlr, obs = mlr_data$test$time_minutes)
+        #value <- list(mlr_summ, train_rmse_mlr, test_pred_mlr)
+    #})
+    
+    
+    output$mlrfit <- renderPrint({
+        
         set.seed(388588)
-        newData <- shoes_data %>% dplyr::select(!!!input$mlr_x, time_minutes)
-        vaporfly_index <- createDataPartition(newData$vaporfly, p = input$split, list = FALSE)
-        train <- newData[vaporfly_index, ]
-        test <- newData[-vaporfly_index, ]
+        
+        #if(input$mlr_year){
+        #    
+        #    newData <- shoes_data
+        #    newData
+        #    
+        #} else {
+        #    
+        #    newData <- shoes_data %>% select(-year)
+        #    newData
+        #}
+        
+        #newData <- shoes_data %>% select(!!!input$mlr_x, time_minutes) 
+        
+        #newData <- mlr_data()$newData
+        
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        train <- shoes_data[vaporfly_index, ]
+        test <- shoes_data[-vaporfly_index, ]
         
         mlr_fit <- train(time_minutes ~ . , 
                          data=train,
                          method = "lm",
                          trControl = trainControl(method = "cv", number = 10),
                          preProcess = c("center", "scale"))
-        mlr_summ <- summary(mlr_fit)
-        test_pred_mlr <- predict(mlr_fit, newdata = mlr_data$test)
-        train_pred_mlr <- predict(cv_fit1, newdata = mlr_data$train)
-        train_rmse_mlr <- postResample(train_pred_mlr, obs = mlr_data$train$time_minutes)
-        test_rmse_mlr <- postResample(test_pred_mlr, obs = mlr_data$test$time_minutes)
-    })
-    
-    
-    output$mlrfit <- renderPrint({
+        summary(mlr_fit)
+        #test_pred_mlr <- predict(mlr_fit, newdata = test)
+        #train_pred_mlr <- predict(mlr_fit, newdata = train)
+        #train_rmse_mlr <- postResample(train_pred_mlr, obs = train$time_minutes)
+        #test_rmse_mlr <- postResample(test_pred_mlr, obs = test$time_minutes)
+        #train_pred_mlr
+        #test_rmse_mlr
+        #mlr_data()$mlr_summ
+        #newData <- mlr_data()$newData
         
+        #vaporfly_index <- createDataPartition(newData$vaporfly, p = input$split, list = FALSE)
+        #train <- newData[vaporfly_index, ]
+        #test <- newData[-vaporfly_index, ]
+        
+        #mlr_fit <- train(time_minutes ~ . , 
+        #                 data=train,
+        #                 method = "lm",
+        #                 trControl = trainControl(method = "cv", number = 10),
+        #                 preProcess = c("center", "scale"))
+        #summary(mlr_fit)
+        #value[1]
         #set.seed(388588)
         #shoes_data <- shoe %>% filter(vaporfly != "NA")
         # sum(is.na(shoes$age))
@@ -163,7 +230,7 @@ shinyServer(function(input, output) {
         #                 method = "lm",
         #                 trControl = trainControl(method = "cv", number = 10),
         #                 preProcess = c("center", "scale"))
-        mlr_data$mlr_summ
+        #mlr_data$mlr_summ
         
         #test_pred_mlr <- predict(mlr_fit, newdata = mlr_data$test)
         #train_pred_mlr <- predict(cv_fit1, newdata = mlr_data$train)
@@ -173,7 +240,111 @@ shinyServer(function(input, output) {
         #test_rmse_mlr
         
     })
+    output$mlr_rmse <- renderDataTable({
+        
+        set.seed(388588)
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        train <- shoes_data[vaporfly_index, ]
+        test <- shoes_data[-vaporfly_index, ]
+        
+        mlr_fit <- train(time_minutes ~ . , 
+                         data=train,
+                         method = "lm",
+                         trControl = trainControl(method = "cv", number = 10),
+                         preProcess = c("center", "scale"))
+        
+        test_pred_mlr <- predict(mlr_fit, newdata = test)
+        train_pred_mlr <- predict(mlr_fit, newdata = train)
+        train_rmse_mlr <- postResample(train_pred_mlr, obs = train$time_minutes)
+        test_rmse_mlr <- postResample(test_pred_mlr, obs = test$time_minutes)
+        tablala <- rbind(train_rmse_mlr, test_rmse_mlr)
+        row.names(tablala) <- c("Training set", "Test set")
+        round(tablala, 4) 
+        
+    })
     
+####################### Regression Tree ###################################################    
+    
+    
+    
+    
+    
+    
+####################### Random Forest #####################################################    
+    
+    output$rf.varimportance <- renderPlot({
+        
+        set.seed(388588)
+        
+        
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        train <- shoes_data[vaporfly_index, ]
+        test <- shoes_data[-vaporfly_index, ]
+        
+        #mlr_fit <- train(time_minutes ~ . , 
+        #                 data=train,
+        #                 method = "lm",
+        #                 trControl = trainControl(method = "cv", number = 10),
+        #                 preProcess = c("center", "scale"))
+        
+        #random_f <- train(time_minutes ~ . , data = trainTrans3,
+        #                  method = "rf",
+        #                  trControl = trainControl(method = "cv", number = 5),
+        #                  #preProcess = c("center", "scale"),
+        #                  tuneGrid = data.frame(mtry = 3:8))
+        #random_f
+        #pred_rf <- predict(random_f, newdata = testTrans3)
+        #rf_rmse <- postResample(pred_rf, obs = testTrans3$time_minutes)
+        #rf_rmse
+        #varImp(random_f)
+        #vip(random_f)
+        
+        random_f <- train(time_minutes ~ . , data = train,
+                          method = "rf",
+                          trControl = trainControl(method = "cv", number = 5),
+                          preProcess = c("center", "scale"),
+                          tuneGrid = data.frame(mtry = input$mtry[1]:input$mtry[2]))
+        #random_f
+        #train_pred_rf <- predict(random_f, newdata = train)
+        #test_pred_rf <- predict(random_f, newdata = test)
+        #train_rf_rmse <- postResample(train_pred_rf, obs = train$time_minutes)
+        #test_rf_rmse <- postResample(test_pred_rf, obs = test$time_minutes)
+        #rf_table <- rbind(train_rf_rmse, test_rf_rmse)
+        #row.names(rf_table) <- c("Training set", "Test set")
+        #round(rf_table, 4)
+        varImp(random_f)
+        #vip(random_f)
+        
+    })
+    output$rf.rmse <- renderPrint({
+        
+        set.seed(388588)
+        
+
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        train <- shoes_data[vaporfly_index, ]
+        test <- shoes_data[-vaporfly_index, ]
+        
+        random_f <- train(time_minutes ~ . , data = train,
+                          method = "rf",
+                          trControl = trainControl(method = "cv", number = 5),
+                          #preProcess = c("center", "scale"),
+                          tuneGrid = data.frame(mtry = input$mtry[1]:input$mtry[2]))
+        
+        train_pred_rf <- predict(random_f, newdata = train)
+        test_pred_rf <- predict(random_f, newdata = test)
+        train_rf_rmse <- postResample(train_pred_rf, obs = train$time_minutes)
+        test_rf_rmse <- postResample(test_pred_rf, obs = test$time_minutes)
+        rf_table <- rbind(train_rf_rmse, test_rf_rmse)
+        row.names(rf_table) <- c("Training set", "Test set")
+        round(rf_table, 4)
+        #varImp(random_f)
+        #vip(random_f)
+
+    })
+    
+    
+################################ DATA page ##########################################################    
     getData <- reactive({
         
         if(length(input$variable) == 0) {
