@@ -68,11 +68,11 @@ shinyUI(
                    the gender type, the year and the marathon courses."),
                  br(),
                  h4(strong("Modeling"), "Page - This tab containts three sub-tabs/sub-pages"),
-                 h5("Modeling Information Tab ---"),
+                 h5("* Modeling Information Tab ---"),
                  p("This page contains the information of the three supervised learning models used to fit the data: multiple 
                    linear regression, regression tree method and random forest method. The three modeling approaches are 
                    discussed here as well as the pros and the cons for each one of them."),
-                 h5("Model Fitting Tab --- This tab contains three sub-tabs/sub-pages, one for each model"),
+                 h5("* Model Fitting Tab --- This tab contains three sub-tabs/sub-pages, one for each model"),
                  p("This page gives users three more tabs to see the modeling performance of each model fit, one tab for each 
                    model fit. All three sub-tabs provide some functionality for choosing model settings for each model, such 
                    as the values of the tuning parameters and the number of cross-validation folds. In addition, the users 
@@ -82,7 +82,7 @@ shinyUI(
                    statistics are reported for both training and test sets in each model. Other appropriate summaries about 
                    the model fits such as the variable importance plot from the random forest model and the summary() run on 
                    the multiple regression model fit are reported in their corresponding tabs as well."),
-                 h5("Prediction Tab ---"),
+                 h5("* Prediction Tab ---"),
                  p("The users are given choices on different model fits with different values of the predictors to predict on 
                    the average athletes finishing times given the model fits and the value of each of the predictors."),
                  br(),
@@ -312,8 +312,6 @@ shinyUI(
                  sidebarLayout(
                      sidebarPanel(
                          h4("Scroll through the data set "), 
-                            # When click on the hyperlink, hyperlink opens on the same browser, not a new window
-                         br(),
                          h5("You can subset the data set (columns and rows)."),
                          
                          # Default is the first one keyed in, "Just Classification"
@@ -323,15 +321,18 @@ shinyUI(
                          varSelectInput("variable", label = "Variables to show:", 
                                         shoe,
                                         multiple = TRUE),
-                         h5("You can filter the ", strong("observations/rows"), " for the subsetted data by inputting 
-                            the syntax below:"),
+                         #h5("You can filter the ", strong("observations/rows"), " for the subsetted data by inputting 
+                         #   the syntax below:"),
                          #checkboxInput("gender", label = "If you want to subset based on gender type:"),
                          #conditionalPanel("input.gender", 
                          #                 checkboxInput("sub_gender", "Male"))),
                          #submitButton(text = "submit"),
-                         numericInput("era", "Year", value = NULL, min = 2015, max = 2019),
-                         h4("Downloading (subsetted) Data"),
-                         actionButton("downloadData", "Download")
+                         #numericInput("era", "Year", value = NULL, min = 2015, max = 2019),
+                         actionButton("submit_data", "Submit"),
+                         br(),
+                         h4("Download the Data"),
+                         actionButton("saveData", "Download!")
+                         #downloadButton("downloadData", "Download")
                  
                      ),
                      # Show a plot and a table output of the summary statistics

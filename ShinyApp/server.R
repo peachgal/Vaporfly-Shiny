@@ -24,7 +24,7 @@ shoes_data$vaporfly <- cut(shoes_data$vaporfly, 2, c("No", "Yes"))
 # shoes$year <- cut(shoes$year, 5, c("2015", "2016", "2017", "2018", "2019"))
 
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
 
     plotdata <- shoe %>% filter(vaporfly != "NA")
     
@@ -394,13 +394,13 @@ shinyServer(function(input, output) {
         
     })
 ################################ DATA page ##########################################################    
-    getData <- reactive({
+    getData <- reactive( {
         
         if(length(input$variable) == 0) {
             return(shoe)
-            } else if(input$era){ 
+            } else { 
                 
-                newData <- shoe %>% dplyr::select(!!!input$variable) %>% filter(year == input$era)
+                newData <- shoe %>% dplyr::select(!!!input$variable)
                 newData
                     
             } #else if(input$era) {
@@ -412,11 +412,11 @@ shinyServer(function(input, output) {
                     #newData <- shoe %>% dplyr::select(!!!input$variable) %>% filter(sex == input$gender, year == input$era)
                     #newData
                 #} 
-              else {
+             # else {
                     
-                    newData <- shoe %>% dplyr::select(!!!input$variable)
-                    newData
-                }
+             #       newData <- shoe %>% dplyr::select(!!!input$variable)
+             #       newData
+             #   }
             
     })
     output$datatable <- renderDataTable({
@@ -425,18 +425,24 @@ shinyServer(function(input, output) {
         shoeData
     })
     
+    observeEvent(input$saveData, {
+        write.csv(getData(), "vaporfly_dataset.csv", row.names = FALSE)
+        
+        
+    })
     #observe(input$downloadData, {print(head(shoe))})
-    #observeEvent(input$downloadData, {
+    # <- reactive({
         
     #    saveData(shoe)
     #})
+    
     #output$downloadData <- downloadHandler({
         
     #    filename = function(){
-    #        "vaporfly_data.csv"
+    #        paste0("vaporfly_dataset", ".csv")
     #    }
-    #    content = function(file="vaporfly_data.csv"){ 
-    #        write.csv(shoe, file, row.names = FALSE)
+    #    content = function(file){ 
+    #        write.csv(getData(), file, row.names = FALSE)
     #    }
     #})
 })
