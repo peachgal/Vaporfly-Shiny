@@ -23,5 +23,5 @@ The purpose of the APP is to create a Shiny App that can be used to explore the 
 ### 4. The shiny::runGitHub() code that we can copy and paste into RStudio to run the app
 
 ```markdown  
-  shiny::runGitHub("Vaporfly-Shiny", "peachgal") 
+  shiny::runGitHub("Vaporfly-Shiny", "peachgal", ref = "main") 
 ```  
