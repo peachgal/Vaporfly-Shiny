@@ -2,30 +2,26 @@
 
 ### 1. Brief description of the app and its purpose.
   
-The purpose of the repo is to use supervised machine learning methods (linear regressions, ensemble methods) to develop different predictive models that focus on predicting the popularity of online news articles given the features of those articles published on Mashable, one of the largest online news sites. Since the target response is a continuous variable, the number of shares, the predictive models are compared with their RMSE value when fitting on the test set. Then, the best predictive model is chosen with the lowest RMSE value when fitting on the test set. We declare a winning model in predicting the online news popularity measures. In addition, this process is automated to run the analysis, perform exploratory data analysis, fit different predictive models, compare different predictive models and find the optimal model for each of the data channels. The articles were collected from six data channels on Mashable: lifestyle, entertainment, business, social media, technology and world.  
+The purpose of the APP is to create a Shiny App that can be used to explore the chosen data set and implement and compare three predictive modeling fits using the supervised machine learning methods. We will utilize the functionality of the Shiny App to perform exploratory data analysis of the collected marathon athletes data and see if there is a significant effect of Nike Vaporfly shoes on marathon runners' performance. This App is user-friendly and interactive with user interface. Users are able to browse the data and select the choices they want in EDA, model building, model fitting and prediction in the App.
   
 ### 2. A list of R packages needed to run the app
 
+   * shiny
    * rmarkdown
    * tidyverse
-   * knitr
    * caret
-   * corrplot
    * ggplot2
-   * gbm
+   * DT
    * vip
 
 ### 3. A line of code to install all the packages used
 
 ```markdown
-  install.packages("tidyverse", "ggplot2", "caret", "vip", "knitr", "rmarkdown")
+  install.packages(c("shiny", "rmarkdown", "tidyverse", "caret", "ggplot2", "DT", "vip"))
 ```
 
 ### 4. The shiny::runGitHub() code that we can copy and paste into RStudio to run the app
 
 ```markdown  
-  library(rmarkdown)  
-  library(tidyverse)
-  
   shiny::runGitHub("Vaporfly-Shiny", "peachgal") 
 ```  
