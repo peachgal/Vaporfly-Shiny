@@ -134,25 +134,14 @@ shinyServer(function(input, output, session) {
         
         input$mtry
     })
+    tune_cv_rf <- eventReactive(input$submit_mlr, {
+        
+        input$cv_fold_rf
+    })
     
     output$mlrfit <- renderPrint({
         
         set.seed(388588)
-        
-        #if(input$mlr_year){
-        #    
-        #    newData <- shoes_data
-        #    newData
-        #    
-        #} else {
-        #    
-        #    newData <- shoes_data %>% select(-year)
-        #    newData
-        #}
-        
-        #newData <- shoes_data %>% select(!!!input$mlr_x, time_minutes) 
-        
-        #newData <- mlr_data()$newData
         
         vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
         train <- shoes_data[vaporfly_index, ]
@@ -161,7 +150,7 @@ shinyServer(function(input, output, session) {
         mlr_fit <- train(time_minutes ~ . , 
                          data=train,
                          method = "lm",
-                         trControl = trainControl(method = "cv", number = 10),
+                         trControl = trainControl(method = "cv", number = tune_cv()),
                          preProcess = c("center", "scale"))
         summary(mlr_fit)
 
@@ -176,7 +165,7 @@ shinyServer(function(input, output, session) {
         mlr_fit <- train(time_minutes ~ . , 
                          data=train,
                          method = "lm",
-                         trControl = trainControl(method = "cv", number = 10),
+                         trControl = trainControl(method = "cv", number = tune_cv()),
                          preProcess = c("center", "scale"))
         
         test_pred_mlr <- predict(mlr_fit, newdata = test)
@@ -250,7 +239,7 @@ shinyServer(function(input, output, session) {
         
         random_f <- train(time_minutes ~ . , data = train,
                           method = "rf",
-                          trControl = trainControl(method = "cv", number = 5),
+                          trControl = trainControl(method = "cv", number = tune_cv_rf()),
                           preProcess = c("center", "scale"),
                           tuneGrid = data.frame(mtry = tune_mtry()[1]:tune_mtry()[2]))
 
@@ -269,7 +258,7 @@ shinyServer(function(input, output, session) {
         
         random_f <- train(time_minutes ~ . , data = train,
                           method = "rf",
-                          trControl = trainControl(method = "cv", number = 5),
+                          trControl = trainControl(method = "cv", number = tune_cv_rf()),
                           #preProcess = c("center", "scale"),
                           tuneGrid = data.frame(mtry = tune_mtry()[1]:tune_mtry()[2]))
         
@@ -334,20 +323,7 @@ shinyServer(function(input, output, session) {
                 newData <- shoe %>% dplyr::select(!!!input$variable)
                 newData
                     
-            } #else if(input$era) {
-                    
-                    #newData <- shoe %>% dplyr::select(!!!input$variable) %>% filter(year == input$era)
-                    #newData
-                #} else if(input$gender & input$era) {
-                    
-                    #newData <- shoe %>% dplyr::select(!!!input$variable) %>% filter(sex == input$gender, year == input$era)
-                    #newData
-                #} 
-             # else {
-                    
-             #       newData <- shoe %>% dplyr::select(!!!input$variable)
-             #       newData
-             #   }
+            } 
             
     })
     output$datatable <- renderDataTable({
