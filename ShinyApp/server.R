@@ -156,8 +156,8 @@ shinyServer(function(input, output, session) {
     #observeEvent(input$submit_mlr, {})
     data_split <- eventReactive(input$submit_mlr, {
         
-        input$split
-        
+        a <- input$split
+
     })
     output$mlrfit <- renderPrint({
         
@@ -275,7 +275,7 @@ shinyServer(function(input, output, session) {
         regress_tree <- train(time_minutes ~ . , 
                               data = train, 
                               method = "rpart", 
-                              trControl = trainControl(method = "cv", number = 10),
+                              trControl = trainControl(method = "cv", number = input$cv_fold_rt),
                               preProcess = c("center", "scale"),
                               #tuneLength = 30)
                               tuneGrid = data.frame(cp = seq(from = input$cp[1], to = input$cp[2], by = 0.00001)))
@@ -293,7 +293,7 @@ shinyServer(function(input, output, session) {
         regress_tree <- train(time_minutes ~ . , 
                               data = train, 
                               method = "rpart", 
-                              trControl = trainControl(method = "cv", number = 10),
+                              trControl = trainControl(method = "cv", number = input$cv_fold_rt,
                               preProcess = c("center", "scale"),
                               #tuneLength = 30)
                               tuneGrid = data.frame(cp = seq(from = input$cp[1], to = input$cp[2], by = 0.00001)))
@@ -323,7 +323,7 @@ shinyServer(function(input, output, session) {
         
         random_f <- train(time_minutes ~ . , data = train,
                           method = "rf",
-                          trControl = trainControl(method = "cv", number = 5),
+                          trControl = trainControl(method = "cv", number = input$cv_fold_rf),
                           preProcess = c("center", "scale"),
                           tuneGrid = data.frame(mtry = input$mtry[1]:input$mtry[2]))
 
@@ -342,7 +342,7 @@ shinyServer(function(input, output, session) {
         
         random_f <- train(time_minutes ~ . , data = train,
                           method = "rf",
-                          trControl = trainControl(method = "cv", number = 5),
+                          trControl = trainControl(method = "cv", number = input$cv_fold_rf),
                           #preProcess = c("center", "scale"),
                           tuneGrid = data.frame(mtry = input$mtry[1]:input$mtry[2]))
         

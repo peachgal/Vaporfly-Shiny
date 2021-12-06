@@ -187,14 +187,17 @@ shinyUI(
                                  sidebarLayout(
                                      sidebarPanel(
                                          sliderInput("split",
-                                                     "Proportion of data used in training set",
+                                                     "Proportion of data split into training set",
                                                      min = 0.45,
                                                      max = 0.85,
                                                      value = 0.70,
                                                      step = 0.01),
                                          
                                          checkboxInput("mlr_year", "Add one more predictor - Year?"),
-                                         h4("Click on \"Submit\" below to run all 3 models"),
+                                         br(),
+                                         p(strong("Make sure the values of the tuning parameters and others are set for 
+                                         regression tree and random forest models as well.")),
+                                         h5("Click on \"Submit\" button below to run all 3 models"),
                                          actionButton("submit_mlr", "Submit")
                                      ),
                                      # Show a plot of the generated distribution
@@ -212,14 +215,19 @@ shinyUI(
                                  
                                       sidebarLayout(
                                           sidebarPanel(
+                                              h5("The range of the tuning parameter set for cross-validation to run."),
                                               sliderInput("cp",
                                                           "Tuning parameter - cp",
                                                           min = 0.0008,
                                                           max = 0.0013,
                                                           value = c(0.001, 0.0013),
                                                           step = 0.00001),
-                                              # checkboxInput("mlr_year", "Add one more predictor - Year?"),
-                                              actionButton("submit_rt", "Submit")
+                                              sliderInput("cv_fold_rt",
+                                                          "Cross-Validation Fold",
+                                                          min = 1,
+                                                          max = 15,
+                                                          value = 10)
+                                              
                                           ),
                                           # Show a plot of the generated distribution
                                           mainPanel(
@@ -236,14 +244,21 @@ shinyUI(
                              tabPanel("Random Forest", fluid = TRUE,
                                  sidebarLayout(
                                      sidebarPanel(
+                                         h5("Random forest model takes a little longer to run than the rest. Be patient!"),
+                                         br(),
+                                         h5("The range of the tuning parameter set for cross-validation to run."),
                                          sliderInput("mtry",
                                                      "Tuning parameter - mtry",
                                                      min = 3,
                                                      max = 8,
                                                      value = c(4, 6),
                                                      step = 1),
-                                         # checkboxInput("mlr_year", "Add one more predictor - Year?"),
-                                         actionButton("submit_rf", "Submit")
+                                         sliderInput("cv_fold_rf",
+                                                     "Cross-Validation Fold",
+                                                     min = 1,
+                                                     max = 6,
+                                                     value = 5)
+                                         
                                          ),
                                      # Show a plot of the generated distribution
                                      mainPanel(
