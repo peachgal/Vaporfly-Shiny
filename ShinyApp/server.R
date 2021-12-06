@@ -12,6 +12,7 @@ library(tidyverse)
 library(caret)
 library(DT)
 library(vip)
+library(rmarkdown)
 
 shoe <- read_csv(file = "sampled_shoe.csv", col_names = TRUE)
 shoe <- data.frame(shoe) 
@@ -25,17 +26,8 @@ shoes_data$vaporfly <- cut(shoes_data$vaporfly, 2, c("No", "Yes"))
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
 
-    output$distPlot <- renderPlot({
-
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-
-    })
     plotdata <- shoe %>% filter(vaporfly != "NA")
+    
     output$summarytable <- renderDataTable({
         
         var <- input$summarise # connect to  selectInput - internal name
@@ -47,16 +39,8 @@ shinyServer(function(input, output) {
         colnames(summ_data2)[2] <- var
         colnames(summ_data2)[3] <- "Average time(minutes)"
         summ_data2
-        #GermanCreditSub <- plo[ , c("Class", "InstallmentRatePercentage", var), drop = FALSE]
-        #tab <- aggregate(GermanCreditSub[[var]] ~ Class + InstallmentRatePercentage, data = GermanCreditSub, FUN = mean)
-        #tab
-        #tab2 <- data.frame(tab[, -3], round(tab[, 3], input$rounding))
-        #colnames(tab2)[3] <- paste0("Average ", var)
-        #tab2
-        
-    })
-    
 
+    })
     
     output$myplot <- renderPlot({
         
@@ -78,11 +62,11 @@ shinyServer(function(input, output) {
                   title = element_text(size = 13))
         
         # draw the histogram with the specified number of bins
-        second <- ggplot(data = plotdata, aes(x = time_minutes))
-        second <- ggplot(data = plotdata, aes(x = time_minutes, color = sex, fill = vaporfly)) +
+        #second <- ggplot(data = plotdata, aes(x = time_minutes))
+        second <- ggplot(data = plotdata, aes(x = time_minutes, fill = vaporfly)) + #color = sex
             geom_histogram() + 
             #coord_cartesian(xlim=c(0, 5000)) + 
-            labs(x = "Time (minutes)", title = "Figure 2. Number of deaths in US for each vaccine timeline") + 
+            labs(x = "Time (minutes)", title = "Figure 2. Runtimes versus Vaporfly") + 
             theme(axis.text.x = element_text(size = 10), 
                   axis.text.y = element_text(size = 10), 
                   axis.title.x = element_text(size = 15), 
@@ -98,7 +82,7 @@ shinyServer(function(input, output) {
         third <- ggplot(data = sum_data, aes(x = sex, y = Average, fill = vaporfly)) + 
             geom_bar(stat = "identity", position = "dodge") + 
             labs(x = "Gender", y = "Average Time (minutes)", 
-                 title = "Figure 3. ") + 
+                 title = "Figure 3. Average runtime for athletes wearing Vaporfly or not") + 
             scale_fill_discrete(name = "Vaporfly", labels = c("No", "Yes")) + 
             theme(axis.text.x = element_text(size = 10), 
                   axis.text.y = element_text(size = 10), 
@@ -123,6 +107,13 @@ shinyServer(function(input, output) {
         
     })
     
+    output$text1 <- renderUI({
+        
+        withMathJax(
+            helpText('The general form is
+                     $$y=\\beta_0+\\beta_1{x_1}+\\beta_2{x_2}+\\beta_3{x_2^2}+\\beta_4{x_1}{x_2^2}+...+\\epsilon$$')
+        )
+    })
 ######################## Multiple Linear Regression ###########################################
     
      #shoes_data <- shoe %>% filter(vaporfly != "NA") %>% select(marathon, year, vaporfly, time_minutes, sex)
