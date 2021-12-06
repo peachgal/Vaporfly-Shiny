@@ -18,7 +18,6 @@ shoes_data <- shoe %>% filter(vaporfly != "NA") %>% select(marathon, year, vapor
 shoes_data$year <- cut(shoes_data$year, 5, c("2015", "2016", "2017", "2018", "2019"))
 shoes_data$vaporfly <- as.numeric(shoes_data$vaporfly)
 shoes_data$vaporfly <- cut(shoes_data$vaporfly, 2, c("No", "Yes"))
-predictors <- c("marathon", "year", "vaporfly", "sex")
 shoes_data <- data.frame(shoes_data)
 
 # Define UI for application that draws a histogram
@@ -96,8 +95,19 @@ shinyUI(
                      sidebarPanel(
                          radioButtons("plot_type",
                                      "Plot Type:",
-                                     choices = c("Scatterplot", "Histogram", "Barplot"),
-                                     selected = "Scatterplot"),
+                                     choices = c("Boxplot", "Histogram", "Barplot"),
+                                     selected = "Boxplot"),
+                         conditionalPanel(condition = "input.plot_type == 'Boxplot'",
+                                          selectInput("boxp_pred", 
+                                                      "Variable on x-axis:", 
+                                                      c("Year" = "year", 
+                                                        "Marathon" = "marathon"))),
+                         conditionalPanel(condition = "input.plot_type == 'Histogram'",
+                                          selectInput("hist_pred", 
+                                                      "Variable on facet-wrap:",
+                                                      c("Vaporfly" = "vaporfly", 
+                                                        "Gender" = "sex",
+                                                        "Year" = "year"))),
                          selectInput("summarise", 
                                      "Variables to summarize",
                                      choices = c("sex", "year", "marathon"),

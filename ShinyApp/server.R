@@ -10,6 +10,7 @@
 library(shiny)
 library(tidyverse)
 library(caret)
+library(ggplot2)
 library(DT)
 library(vip)
 library(rmarkdown)
@@ -45,15 +46,14 @@ shinyServer(function(input, output, session) {
     output$myplot <- renderPlot({
         
         plotdata <- shoe %>% filter(vaporfly != "NA")
-        # Making three different bar-plots
-        scatter <- ggplot(data = plotdata, aes(x = year, y = time_minutes, color = sex, shape = vaporfly)) + 
-            geom_point(size = 2, position = "jitter") + 
-            #scale_shape_discrete(name = "") + 
-            #coord_cartesian(xlim=c(0, 300000), ylim=c(0, 7500)) +
-            #geom_smooth(method = lm, lwd = 2) + 
-            guides(color = guide_legend(override.aes = list(size = 8))) + 
-            labs(x = "Year", y = "Time (minutes)", title = "Figure 1. Marathon runners' runtimes across years") + 
-            theme(axis.text.x = element_text(size = 10), 
+        
+        box_plot <- ggplot(data = shoes_data, aes(x = !!sym(input$boxp_pred), y = time_minutes)) + 
+            geom_boxplot(fill = "white") + 
+            geom_jitter(aes(color = sex, shape = vaporfly), size = 2) + 
+            guides(color = guide_legend(override.aes = list(size = 8)), 
+                   shape = guide_legend(override.aes = list(size = 8))) + 
+            labs(x = input$boxp_pred, y = "Time (minutes)", title = "Figure 1. Athletes' Marathon Finishing Times") + 
+            theme(axis.text.x = element_text(angle = 45, size = 10), 
                   axis.text.y = element_text(size = 10), 
                   axis.title.x = element_text(size = 15), 
                   axis.title.y = element_text(size = 15), 
@@ -63,10 +63,10 @@ shinyServer(function(input, output, session) {
         
         # draw the histogram with the specified number of bins
         #second <- ggplot(data = plotdata, aes(x = time_minutes))
-        second <- ggplot(data = plotdata, aes(x = time_minutes, fill = vaporfly)) + #color = sex
+        hist_gram <- ggplot(data = shoes_data, aes(x = time_minutes, fill = !!sym(input$hist_pred))) + #color = sex
             geom_histogram() + 
             #coord_cartesian(xlim=c(0, 5000)) + 
-            labs(x = "Time (minutes)", title = "Figure 2. Runtimes versus Vaporfly") + 
+            labs(x = "Time (minutes)", title = "Figure 2. Athletes' Marathon Finishing Times") + 
             theme(axis.text.x = element_text(size = 10), 
                   axis.text.y = element_text(size = 10), 
                   axis.title.x = element_text(size = 15), 
@@ -74,12 +74,12 @@ shinyServer(function(input, output, session) {
                   legend.key.size = unit(1, 'cm'), 
                   legend.text = element_text(size = 13), 
                   title = element_text(size = 13)) + 
-            facet_wrap(~vaporfly) 
+            facet_wrap(~ vaporfly, labeller = label_both) 
         
         sum_data <- plotdata %>% group_by(marathon, sex, vaporfly) %>% 
             summarise(Average = mean(time_minutes))
         
-        third <- ggplot(data = sum_data, aes(x = sex, y = Average, fill = vaporfly)) + 
+        bar_plot <- ggplot(data = sum_data, aes(x = sex, y = Average, fill = vaporfly)) + 
             geom_bar(stat = "identity", position = "dodge") + 
             labs(x = "Gender", y = "Average Time (minutes)", 
                  title = "Figure 3. Average runtime for athletes wearing Vaporfly or not") + 
@@ -94,15 +94,15 @@ shinyServer(function(input, output, session) {
             coord_flip()
         
         # generate different barplots based on input$barplots_3 from ui.R in radioButtons
-        if(input$plot_type == "Scatterplot"){
+        if(input$plot_type == "Boxplot"){
             
-            scatter
+            box_plot
         } else if(input$plot_type == "Histogram"){
             
-            second
+            hist_gram
         } else {
             
-            third
+            bar_plot
         }
         
     })
