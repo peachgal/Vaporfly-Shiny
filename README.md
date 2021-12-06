@@ -1,4 +1,4 @@
-## Nike Vaporfly Running Shoes Improvement - Shiny App
+## Shiny App - Nike Vaporfly Marathon Performance Improvement Study
 
 ### 1. Brief description of the app and its purpose.
   
