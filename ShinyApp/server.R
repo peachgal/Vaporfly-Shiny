@@ -293,7 +293,7 @@ shinyServer(function(input, output, session) {
         regress_tree <- train(time_minutes ~ . , 
                               data = train, 
                               method = "rpart", 
-                              trControl = trainControl(method = "cv", number = input$cv_fold_rt,
+                              trControl = trainControl(method = "cv", number = input$cv_fold_rt),
                               preProcess = c("center", "scale"),
                               #tuneLength = 30)
                               tuneGrid = data.frame(cp = seq(from = input$cp[1], to = input$cp[2], by = 0.00001)))
