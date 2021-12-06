@@ -96,7 +96,7 @@ shinyUI(
                          radioButtons("plot_type",
                                      "Plot Type:",
                                      choices = c("Boxplot", "Histogram", "Barplot"),
-                                     selected = "Boxplot"),
+                                     selected = character(0)),
                          conditionalPanel(condition = "input.plot_type == 'Boxplot'",
                                           selectInput("boxp_pred", 
                                                       "Variable on x-axis:", 
@@ -104,14 +104,16 @@ shinyUI(
                                                         "Marathon" = "marathon"))),
                          conditionalPanel(condition = "input.plot_type == 'Histogram'",
                                           selectInput("hist_pred", 
-                                                      "Variable on facet-wrap:",
+                                                      "Variable on :",
                                                       c("Vaporfly" = "vaporfly", 
                                                         "Gender" = "sex",
                                                         "Year" = "year"))),
                          selectInput("summarise", 
-                                     "Variables to summarize",
+                                     "Variables to summarize in the table:",
                                      choices = c("sex", "year", "marathon"),
-                                     selected = character(0))
+                                     selected = character(0)),
+                         h4(strong("Note: Less finishing times mean faster/better marathon performance of athletes!"),
+                            style = "color:blue;")
                      ),
                                           # Show a plot of the generated distribution
                      mainPanel(
@@ -287,13 +289,13 @@ shinyUI(
                      tabPanel("Prediction", fluid = TRUE,
                               sidebarLayout(
                                   sidebarPanel(
-                                      h4("Select the type of model for predicting runtime of "),
+                                      h4("Select the type of model for predicting time: "),
                                       radioButtons("fit_model", label = "Select the Model:", 
                                                    choices = c("Multiple Linear Regression", 
                                                                "Regression Tree", 
                                                                "Random Forest"),
                                                    selected = character(0)),
-                                      h4("Select predictors' values to predict for marathon runners' average run-time in minutes:"),
+                                      h4("Select predictors' value to predict for marathon athletes' average finishing time:"),
                                       selectInput("pred_sex", label = "Gender",
                                                   choices = unique(shoes_data$sex), 
                                                   selected = character(0)),
@@ -335,14 +337,6 @@ shinyUI(
                          varSelectInput("variable", label = "Variables to show:", 
                                         shoe,
                                         multiple = TRUE),
-                         #h5("You can filter the ", strong("observations/rows"), " for the subsetted data by inputting 
-                         #   the syntax below:"),
-                         #checkboxInput("gender", label = "If you want to subset based on gender type:"),
-                         #conditionalPanel("input.gender", 
-                         #                 checkboxInput("sub_gender", "Male"))),
-                         #submitButton(text = "submit"),
-                         #numericInput("era", "Year", value = NULL, min = 2015, max = 2019),
-                         actionButton("submit_data", "Submit"),
                          br(),
                          h4("Save the subsetted dataset to a .csv file"),
                          actionButton("saveData", "Download!")

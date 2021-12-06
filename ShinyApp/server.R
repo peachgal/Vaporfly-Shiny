@@ -273,10 +273,32 @@ shinyServer(function(input, output, session) {
     })
     
 ############################## Prediction ##################################################################    
+    which_model <- eventReactive(input$submit_model, {
+        
+        input$fit_model
+        
+    })
+    pred_var_sex <- eventReactive(input$submit_model, {
+        
+        input$pred_sex
+    })
+    pred_var_year <- eventReactive(input$submit_model, {
+        
+        input$pred_year
+    })
+    pred_var_vapor <- eventReactive(input$submit_model, {
+        
+        input$pred_vaporfly
+    })
+    pred_var_mara <- eventReactive(input$submit_model, {
+        
+        input$pred_mara
+    })
+    
     output$prediction <- renderText( {
         
         shoes_data
-        if(input$fit_model == "Random Forest"){
+        if(which_model() == "Random Forest"){
             
             pred_fit <- train(time_minutes ~ . , data = shoes_data,
                               method = "rf",
@@ -285,7 +307,7 @@ shinyServer(function(input, output, session) {
                               tuneGrid = data.frame(mtry = 3:8))
             pred_fit
             
-        } else if(input$fit_model == "Regression Tree"){
+        } else if(which_model() == "Regression Tree"){
             
             pred_fit <- train(time_minutes ~ . , data = shoes_data, 
                                   method = "rpart", 
@@ -305,10 +327,10 @@ shinyServer(function(input, output, session) {
         }
         
         temp <- predict(pred_fit, 
-                        newdata = data.frame(sex = input$pred_sex, 
-                                             vaporfly = input$pred_vaporfly, 
-                                             year = input$pred_year, 
-                                             marathon = input$pred_mara), 
+                        newdata = data.frame(sex = pred_var_sex(), 
+                                             vaporfly = pred_var_vapor(), 
+                                             year = pred_var_year(), 
+                                             marathon = pred_var_mara()), 
                         se.fit = TRUE)
         paste("The average running time of the marathon runner is", round(temp, 2), "minutes.", sep = " ")
         
