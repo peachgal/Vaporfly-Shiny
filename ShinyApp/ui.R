@@ -188,24 +188,13 @@ shinyUI(
                                      sidebarPanel(
                                          sliderInput("split",
                                                      "Proportion of data used in training set",
-                                                     min = 0.50,
-                                                     max = 0.80,
+                                                     min = 0.45,
+                                                     max = 0.85,
                                                      value = 0.70,
                                                      step = 0.01),
-                                         #radioButtons("plot_type",
-                                         #             "Plot Type:",
-                                         #             choices = c("Scatterplot", "Histogram", "Barplot"),
-                                         #             selected = "Scatterplot"),
-                                         #selectInput("mlr_x", 
-                                         #            "Select the predictors:",
-                                         #            choices = as.list(shoes_data[-4]), #c("vaporfly", "marathon", "year", "sex"),
-                                         #            selected = shoes_data[3],
-                                         #            multiple = TRUE),
-                                         #varSelectInput("mlr_x", label = "Select the predictors:", 
-                                         #               choices = as.list(shoes_data[-4]),
-                                         #               selected = shoes_data[3],
-                                         #               multiple = TRUE),
+                                         
                                          checkboxInput("mlr_year", "Add one more predictor - Year?"),
+                                         h4("Click on \"Submit\" below to run all 3 models"),
                                          actionButton("submit_mlr", "Submit")
                                      ),
                                      # Show a plot of the generated distribution
@@ -330,7 +319,7 @@ shinyUI(
                          #numericInput("era", "Year", value = NULL, min = 2015, max = 2019),
                          actionButton("submit_data", "Submit"),
                          br(),
-                         h4("Download the Data"),
+                         h4("Save the Dataset to a .csv file"),
                          actionButton("saveData", "Download!")
                          #downloadButton("downloadData", "Download")
                  

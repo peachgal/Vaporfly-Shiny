@@ -153,8 +153,12 @@ shinyServer(function(input, output, session) {
         #test_rmse_mlr <- postResample(test_pred_mlr, obs = mlr_data$test$time_minutes)
         #value <- list(mlr_summ, train_rmse_mlr, test_pred_mlr)
     #})
-    
-    
+    #observeEvent(input$submit_mlr, {})
+    data_split <- eventReactive(input$submit_mlr, {
+        
+        input$split
+        
+    })
     output$mlrfit <- renderPrint({
         
         set.seed(388588)
@@ -174,7 +178,7 @@ shinyServer(function(input, output, session) {
         
         #newData <- mlr_data()$newData
         
-        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
         train <- shoes_data[vaporfly_index, ]
         test <- shoes_data[-vaporfly_index, ]
         
@@ -238,7 +242,7 @@ shinyServer(function(input, output, session) {
     output$mlr_rmse <- renderDataTable({
         
         set.seed(388588)
-        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
         train <- shoes_data[vaporfly_index, ]
         test <- shoes_data[-vaporfly_index, ]
         
@@ -264,7 +268,7 @@ shinyServer(function(input, output, session) {
         
         set.seed(388588)
         
-        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
         train <- shoes_data[vaporfly_index, ]
         test <- shoes_data[-vaporfly_index, ]
         
@@ -282,7 +286,7 @@ shinyServer(function(input, output, session) {
     output$regress.tree_rmse <- renderDataTable({
         
         set.seed(388588)
-        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
         train <- shoes_data[vaporfly_index, ]
         test <- shoes_data[-vaporfly_index, ]
         
@@ -313,7 +317,7 @@ shinyServer(function(input, output, session) {
         set.seed(388588)
         
         
-        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
         train <- shoes_data[vaporfly_index, ]
         test <- shoes_data[-vaporfly_index, ]
         
@@ -332,7 +336,7 @@ shinyServer(function(input, output, session) {
         set.seed(388588)
         
 
-        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
+        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
         train <- shoes_data[vaporfly_index, ]
         test <- shoes_data[-vaporfly_index, ]
         
