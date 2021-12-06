@@ -116,49 +116,25 @@ shinyServer(function(input, output, session) {
     })
 ######################## Multiple Linear Regression ###########################################
     
-     #shoes_data <- shoe %>% filter(vaporfly != "NA") %>% select(marathon, year, vaporfly, time_minutes, sex)
-     # <- reactive({
-     #  newData <- shoes_data %>% select(input$mlr_x, time_minutes)})
-    #mlr_data <- reactive({ #input$submit_mlr,
-    #    set.seed(388588)
-        
-        #if(input$mlr_year){
-        #    
-        #    newData <- shoes_data
-        #    newData
-        #    
-        #} else {
-        #    
-        #    newData <- shoes_data %>% select(-year)
-        #    newData
-        #}
-        
-        #newData <- shoes_data %>% select(!!!input$mlr_x, time_minutes) 
-    
-        #newData <- mlr_data()$newData
-        
-        #vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = input$split, list = FALSE)
-        #train <- shoes_data[vaporfly_index, ]
-        #test <- shoes_data[-vaporfly_index, ]
-    
-        #mlr_fit <- train(time_minutes ~ . , 
-        #                 data=train,
-        #                 method = "lm",
-        #                 trControl = trainControl(method = "cv", number = 10),
-        #                 preProcess = c("center", "scale"))
-        #mlr_summ <- summary(mlr_fit)
-        #test_pred_mlr <- predict(mlr_fit, newdata = mlr_data$test)
-        #train_pred_mlr <- predict(cv_fit1, newdata = mlr_data$train)
-        #train_rmse_mlr <- postResample(train_pred_mlr, obs = mlr_data$train$time_minutes)
-        #test_rmse_mlr <- postResample(test_pred_mlr, obs = mlr_data$test$time_minutes)
-        #value <- list(mlr_summ, train_rmse_mlr, test_pred_mlr)
-    #})
     #observeEvent(input$submit_mlr, {})
     data_split <- eventReactive(input$submit_mlr, {
         
-        a <- input$split
+        input$split
 
     })
+    tune_cp <- eventReactive(input$submit_mlr, {
+        
+        input$cp
+    })
+    tune_cv <- eventReactive(input$submit_mlr, {
+        
+        input$cv_fold_rt
+    })
+    tune_mtry <- eventReactive(input$submit_mlr, {
+        
+        input$mtry
+    })
+    
     output$mlrfit <- renderPrint({
         
         set.seed(388588)
@@ -188,56 +164,7 @@ shinyServer(function(input, output, session) {
                          trControl = trainControl(method = "cv", number = 10),
                          preProcess = c("center", "scale"))
         summary(mlr_fit)
-        #test_pred_mlr <- predict(mlr_fit, newdata = test)
-        #train_pred_mlr <- predict(mlr_fit, newdata = train)
-        #train_rmse_mlr <- postResample(train_pred_mlr, obs = train$time_minutes)
-        #test_rmse_mlr <- postResample(test_pred_mlr, obs = test$time_minutes)
-        #train_pred_mlr
-        #test_rmse_mlr
-        #mlr_data()$mlr_summ
-        #newData <- mlr_data()$newData
-        
-        #vaporfly_index <- createDataPartition(newData$vaporfly, p = input$split, list = FALSE)
-        #train <- newData[vaporfly_index, ]
-        #test <- newData[-vaporfly_index, ]
-        
-        #mlr_fit <- train(time_minutes ~ . , 
-        #                 data=train,
-        #                 method = "lm",
-        #                 trControl = trainControl(method = "cv", number = 10),
-        #                 preProcess = c("center", "scale"))
-        #summary(mlr_fit)
-        #value[1]
-        #set.seed(388588)
-        #shoes_data <- shoe %>% filter(vaporfly != "NA")
-        # sum(is.na(shoes$age))
-        # shoes$year <- cut(shoes$year, 5, c("2015", "2016", "2017", "2018", "2019"))
-         #dummies <- dummyVars( ~ vaporfly + sex + year + marathon, data = shoes_data)
-         # dummy_var <- predict(dummies, newdata = shoes_data)
-         #as_tibble(dummy_var)
-         #shoes_all <- cbind(dummy_var, shoes_data)
-         # shoes_all
-        
-        #preProcValues <- preProcess(train, method = c("center", "scale"))
-        #trainTransformed <- predict(preProcValues, train)
-        #testTransformed <- predict(preProcValues, test)
-        #trainTrans1 <- trainTransformed %>% select(match_name, marathon, year, time_minutes, vaporfly, sex, age)
-        #testTrans1 <- testTransformed %>% select(match_name, marathon, year, time_minutes, vaporfly, sex, age)
-        #trainTrans1
-        #mlr_fit <- train(time_minutes ~ . , 
-        #                 data=mlr_data$train,
-        #                 method = "lm",
-        #                 trControl = trainControl(method = "cv", number = 10),
-        #                 preProcess = c("center", "scale"))
-        #mlr_data$mlr_summ
-        
-        #test_pred_mlr <- predict(mlr_fit, newdata = mlr_data$test)
-        #train_pred_mlr <- predict(cv_fit1, newdata = mlr_data$train)
-        #train_rmse_mlr <- postResample(train_pred_mlr, obs = mlr_data$train$time_minutes)
-        #test_rmse_mlr <- postResample(test_pred_mlr, obs = mlr_data$test$time_minutes)
-        #train_rmse_mlr
-        #test_rmse_mlr
-        
+
     })
     output$mlr_rmse <- renderDataTable({
         
@@ -275,14 +202,14 @@ shinyServer(function(input, output, session) {
         regress_tree <- train(time_minutes ~ . , 
                               data = train, 
                               method = "rpart", 
-                              trControl = trainControl(method = "cv", number = input$cv_fold_rt),
+                              trControl = trainControl(method = "cv", number = tune_cv()),
                               preProcess = c("center", "scale"),
                               #tuneLength = 30)
-                              tuneGrid = data.frame(cp = seq(from = input$cp[1], to = input$cp[2], by = 0.00001)))
+                              tuneGrid = data.frame(cp = seq(from = tune_cp()[1], to = tune_cp()[2], by = 0.00001)))
         regress_tree
 
     })
-    
+    #input$cp[1], input$cp[2]
     output$regress.tree_rmse <- renderDataTable({
         
         set.seed(388588)
@@ -293,10 +220,10 @@ shinyServer(function(input, output, session) {
         regress_tree <- train(time_minutes ~ . , 
                               data = train, 
                               method = "rpart", 
-                              trControl = trainControl(method = "cv", number = input$cv_fold_rt),
+                              trControl = trainControl(method = "cv", number = tune_cv()),
                               preProcess = c("center", "scale"),
                               #tuneLength = 30)
-                              tuneGrid = data.frame(cp = seq(from = input$cp[1], to = input$cp[2], by = 0.00001)))
+                              tuneGrid = data.frame(cp = seq(from = tune_cp()[1], to = tune_cp()[2], by = 0.00001)))
         
         pred_reg.tree.train <- predict(regress_tree, newdata = train)
         pred_reg.tree <- predict(regress_tree, newdata = test)
@@ -323,13 +250,13 @@ shinyServer(function(input, output, session) {
         
         random_f <- train(time_minutes ~ . , data = train,
                           method = "rf",
-                          trControl = trainControl(method = "cv", number = input$cv_fold_rf),
+                          trControl = trainControl(method = "cv", number = 5),
                           preProcess = c("center", "scale"),
-                          tuneGrid = data.frame(mtry = input$mtry[1]:input$mtry[2]))
+                          tuneGrid = data.frame(mtry = tune_mtry()[1]:tune_mtry()[2]))
 
         vip(random_f)
 
-        
+        #input$mtry[1]:input$mtry[2]
     })
     output$rf.rmse <- renderDataTable({
         
@@ -342,9 +269,9 @@ shinyServer(function(input, output, session) {
         
         random_f <- train(time_minutes ~ . , data = train,
                           method = "rf",
-                          trControl = trainControl(method = "cv", number = input$cv_fold_rf),
+                          trControl = trainControl(method = "cv", number = 5),
                           #preProcess = c("center", "scale"),
-                          tuneGrid = data.frame(mtry = input$mtry[1]:input$mtry[2]))
+                          tuneGrid = data.frame(mtry = tune_mtry()[1]:tune_mtry()[2]))
         
         train_pred_rf <- predict(random_f, newdata = train)
         test_pred_rf <- predict(random_f, newdata = test)

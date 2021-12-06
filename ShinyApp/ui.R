@@ -68,11 +68,11 @@ shinyUI(
                    the gender type, the year and the marathon courses."),
                  br(),
                  h4(strong("Modeling"), "Page - This tab containts three sub-tabs/sub-pages"),
-                 h5("* Modeling Information Tab ---"),
+                 h5(strong("* Modeling Information Tab ---"), style = "color:blue;"),
                  p("This page contains the information of the three supervised learning models used to fit the data: multiple 
                    linear regression, regression tree method and random forest method. The three modeling approaches are 
                    discussed here as well as the pros and the cons for each one of them."),
-                 h5("* Model Fitting Tab --- This tab contains three sub-tabs/sub-pages, one for each model"),
+                 h5(strong("* Model Fitting Tab ---"), style = "color:blue;", "This tab contains three sub-tabs/sub-pages, one for each model"),
                  p("This page gives users three more tabs to see the modeling performance of each model fit, one tab for each 
                    model fit. All three sub-tabs provide some functionality for choosing model settings for each model, such 
                    as the values of the tuning parameters and the number of cross-validation folds. In addition, the users 
@@ -82,7 +82,7 @@ shinyUI(
                    statistics are reported for both training and test sets in each model. Other appropriate summaries about 
                    the model fits such as the variable importance plot from the random forest model and the summary() run on 
                    the multiple regression model fit are reported in their corresponding tabs as well."),
-                 h5("* Prediction Tab ---"),
+                 h5(strong("* Prediction Tab ---"), style = "color:blue;"),
                  p("The users are given choices on different model fits with different values of the predictors to predict on 
                    the average athletes finishing times given the model fits and the value of each of the predictors."),
                  br(),
@@ -196,7 +196,7 @@ shinyUI(
                                          checkboxInput("mlr_year", "Add one more predictor - Year?"),
                                          br(),
                                          p(strong("Make sure the values of the tuning parameters and others are set for 
-                                         regression tree and random forest models as well.")),
+                                         regression tree and random forest models as well.", style = "color:red;")),
                                          h5("Click on \"Submit\" button below to run all 3 models"),
                                          actionButton("submit_mlr", "Submit")
                                      ),
@@ -244,7 +244,7 @@ shinyUI(
                              tabPanel("Random Forest", fluid = TRUE,
                                  sidebarLayout(
                                      sidebarPanel(
-                                         h5("Random forest model takes a little longer to run than the rest. Be patient!"),
+                                         h5(strong("Random forest model takes a little longer to run than the rest. Be patient!")),
                                          br(),
                                          h5("The range of the tuning parameter set for cross-validation to run."),
                                          sliderInput("mtry",
@@ -334,7 +334,7 @@ shinyUI(
                          #numericInput("era", "Year", value = NULL, min = 2015, max = 2019),
                          actionButton("submit_data", "Submit"),
                          br(),
-                         h4("Save the Dataset to a .csv file"),
+                         h4("Save the subsetted dataset to a .csv file"),
                          actionButton("saveData", "Download!")
                          #downloadButton("downloadData", "Download")
                  
