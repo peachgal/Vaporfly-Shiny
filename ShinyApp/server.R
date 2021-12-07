@@ -86,7 +86,7 @@ shinyServer(function(input, output, session) {
         
         bar_plot <- ggplot(data = summ_data, aes(x = summ_data[[2]], y = summ_data[[3]], fill = summ_data[[1]])) + 
             geom_bar(stat = "identity", position = "dodge") + 
-            labs(x = "Gender", y = "Average Time (minutes)", 
+            labs(x = var, y = "Average Time (minutes)", 
                  title = "Figure 3. Average finishing time for athletes wearing Vaporfly or not") + 
             scale_fill_discrete(name = "Vaporfly", labels = c("No", "Yes")) + 
             theme(axis.text.x = element_text(size = 10), 

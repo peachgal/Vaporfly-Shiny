@@ -343,6 +343,7 @@ shinyUI(
                          varSelectInput("variable", label = "Variables to show:", 
                                         shoes_data,
                                         multiple = TRUE),
+                         checkboxInput("filter_sex", label = "Filter specific gender type?"),
                          br(),
                          h4("Save the subsetted dataset to a .csv file"),
                          actionButton("saveData", "Save the data!")
