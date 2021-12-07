@@ -99,7 +99,7 @@ shinyUI(
                                      selected = character(0)),
                          conditionalPanel(condition = "input.plot_type == 'Boxplot'",
                                           selectInput("boxp_pred", 
-                                                      "Variable goes on x-axis:", 
+                                                      "Variable on x-axis:", 
                                                       c("Year" = "year", 
                                                         "Marathon" = "marathon"))),
                          conditionalPanel(condition = "input.plot_type == 'Histogram'",
@@ -110,7 +110,7 @@ shinyUI(
                                                         "Year" = "year"))),
                          conditionalPanel(condition = "input.plot_type == 'Barplot'",
                                           selectInput("barp_pred",
-                                                      "Variable in lalala:",
+                                                      "Variable on x-axis:",
                                                       c("Gender" = "sex",
                                                         "Year" = "year"))),
                          selectInput("summarise", 
@@ -165,7 +165,8 @@ shinyUI(
                               p("Using tree-based methods, we do not need to include interaction terms between the predictors because 
                                 the method automatically seeks for the best value/level of each predictor to make the split and 
                                 subsequent splits. Tree-based methods automatically account for interactions between the predictors.
-                                They are simple and easy to understand and to interpret the output. No statistical assumptions necessary. 
+                                They are simple and easy to understand and to interpret the output. No statistical assumptions necessary 
+                                and build-in variable selection for the tree-based models. 
                                 "),
                               h4("Disadvantage"),
                               p("However, tree-based methods tend to grow a \"large\" tree (many nodes), and they are usually required 
@@ -196,7 +197,7 @@ shinyUI(
                                 than the linear models or the single tree models.")
                      ),
                      
-################################ Multiple Linear Regression ############################################################## 
+############## Multiple Linear Regression ######################################################################################## 
 
                      tabPanel("Model Fitting", fluid = TRUE,
                          tabsetPanel(
@@ -206,7 +207,7 @@ shinyUI(
                                      sidebarPanel(
                                          sliderInput("split",
                                                      "Proportion of data split into training set. This is done once and is 
-                                                     used in all 3 models",
+                                                     used in all 3 models.",
                                                      min = 0.45,
                                                      max = 0.85,
                                                      value = 0.70,
@@ -220,6 +221,11 @@ shinyUI(
                                          #checkboxGroupInput("interact", "Interaction term(s):",
                                          #                   c("Vaporfly & Gender", "Marathon & Gender"), 
                                          #                   selected = "Vaporfly & Gender"),
+                                         h4(strong("4 predictors are included in MLR model:")), 
+                                            tags$li("Vaporfly shoes (Yes/No)"), 
+                                            tags$li("Gender (Female/Male)"), 
+                                            tags$li("Year (2015-2019)"), 
+                                            tags$li("Marathon courses"),
                                          checkboxInput("inter_act", strong("Want to include interaction term(s)?")),
                                          conditionalPanel(condition = "input.inter_act", 
                                                           radioButtons("interact", "Interaction term(s):",
@@ -228,7 +234,7 @@ shinyUI(
                                          #radioButtons("interact", "interaction term(s)?",
                                          #             c("Vaporfly & Gender", "Marathon & Gender", "Both")),
                                          br(),
-                                         p(strong("Set the values of the tuning parameters and others for 
+                                         h4(strong("Set the values of the tuning parameters and others for 
                                                   regression tree and random forest models on their pages and 
                                                   click on the button below to run all 3 models.", style = "color:red;")),
                                          br(),
@@ -246,10 +252,19 @@ shinyUI(
                              ),
                              
 ######################## Regression Tree ########################################################################
+                             
                              tabPanel("Regression Tree", fluid = TRUE,
                                  
                                       sidebarLayout(
                                           sidebarPanel(
+                                              h4("If NO predictors are selected, the model will automatically include all predictors. Tree 
+                                                 models automatically account for interactions of predictors in the model. Predictor, ", 
+                                                 strong("vaporfly"), " is automatically included in all 3 models because it is the study's 
+                                                 main interest in relation to marathon performance of athletes."),
+                                              
+                                              varSelectInput("predictor_rt", label = "Variable(s) to include in regression tree model:", 
+                                                             shoes_data[-3:-4],
+                                                             multiple = TRUE),
                                               h5("The range of the tuning parameter set for cross-validation to run."),
                                               sliderInput("cp",
                                                           "Tuning parameter - cp",
@@ -270,18 +285,26 @@ shinyUI(
                                               verbatimTextOutput("regress.tree_fit"),
                                               dataTableOutput("regress.tree_rmse")
                                           )
-                                          
                                       )
-                                      
                              ),
 
 ############## Random Forest ################################################################################################
+                             
                              tabPanel("Random Forest", fluid = TRUE,
                                  sidebarLayout(
                                      sidebarPanel(
-                                         h5(strong("Random forest model takes a little longer to run than the rest. Be patient!
-                                                   A status bar is coming soon!"), style = "color:purple;"),
+                                         h4(strong("Random forest model takes a little longer to run than the rest. Please be patient!"), 
+                                            style = "color:purple;"),
                                          br(),
+                                         h4("If NO predictors are selected, the model will automatically include all predictors. Tree 
+                                                 models automatically account for interactions of predictors in the model. Predictor, ", 
+                                            strong("vaporfly"), " is automatically included in all 3 models because it is the study's 
+                                                 main interest in relation to marathon performance of athletes."),
+                                         
+                                         varSelectInput("predictor_rf", label = "Variable(s) to include in random forest model:", 
+                                                        shoes_data[-3:-4],
+                                                        multiple = TRUE),
+                                         
                                          h5("The range of the tuning parameter set for cross-validation to run."),
                                          sliderInput("mtry",
                                                      "Tuning parameter - mtry",
@@ -302,13 +325,11 @@ shinyUI(
                                          #verbatimTextOutput("rf.fit"),
                                          dataTableOutput("rf.rmse")
                                      )
-                                          
                                  )
-                                 
                              )
                          )
                      ),
-############################################ Prediction #######################################################
+############################################ Prediction #########################################################################
 
                      tabPanel("Prediction", fluid = TRUE,
                               sidebarLayout(

@@ -84,7 +84,7 @@ shinyServer(function(input, output, session) {
         colnames(summ_data)[3] <- "Average time (minutes)"
         
         
-        bar_plot <- ggplot(data = summ_data, aes(x = summ_data[[2]], y = summ_data[[3]], fill = summ_data[[1]])) + 
+        bar_plot <- ggplot(data = summ_data, aes(x = !!sym(var), y = summ_data[[3]], fill = vaporfly)) + 
             geom_bar(stat = "identity", position = "dodge") + 
             labs(x = var, y = "Average Time (minutes)", 
                  title = "Figure 3. Average finishing time for athletes wearing Vaporfly or not") + 
@@ -265,13 +265,25 @@ shinyServer(function(input, output, session) {
     
 ####################### Regression Tree ###################################################    
     
+    rtdata <- reactive( {
+        
+        if(length(input$predictor_rt) == 0 ) {
+            rtData <- shoes_data
+            rtData
+        } else {
+            
+            rtData <- shoes_data %>% select(time_minutes, vaporfly, !!!input$predictor_rt)
+            rtData
+        }
+        
+    })
     output$regress.tree_fit <- renderPrint({
         
         set.seed(388588)
         
-        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
-        train <- shoes_data[vaporfly_index, ]
-        test <- shoes_data[-vaporfly_index, ]
+        vaporfly_index <- createDataPartition(rtdata()$vaporfly, p = data_split(), list = FALSE)
+        train <- rtdata()[vaporfly_index, ]
+        test <- rtdata()[-vaporfly_index, ]
         
         regress_tree <- train(time_minutes ~ . , 
                               data = train, 
@@ -287,9 +299,9 @@ shinyServer(function(input, output, session) {
     output$regress.tree_rmse <- renderDataTable({
         
         set.seed(388588)
-        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
-        train <- shoes_data[vaporfly_index, ]
-        test <- shoes_data[-vaporfly_index, ]
+        vaporfly_index <- createDataPartition(rtdata()$vaporfly, p = data_split(), list = FALSE)
+        train <- rtdata()[vaporfly_index, ]
+        test <- rtdata()[-vaporfly_index, ]
         
         regress_tree <- train(time_minutes ~ . , 
                               data = train, 
