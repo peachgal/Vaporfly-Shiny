@@ -38,7 +38,7 @@ shinyServer(function(input, output, session) {
         summ_data2 <- data.frame(summ_data[, -3], round(summ_data[, 3], 4))
         
         colnames(summ_data2)[2] <- var
-        colnames(summ_data2)[3] <- "Average time(minutes)"
+        colnames(summ_data2)[3] <- "Average time (minutes)"
         summ_data2
 
     })
@@ -61,8 +61,7 @@ shinyServer(function(input, output, session) {
                   legend.text = element_text(size = 13), 
                   title = element_text(size = 13))
         
-        # draw the histogram with the specified number of bins
-        #second <- ggplot(data = plotdata, aes(x = time_minutes))
+        # draw the histogram with different colors specified
         hist_gram <- ggplot(data = shoes_data, aes(x = time_minutes, fill = !!sym(input$hist_pred))) + #color = sex
             geom_histogram() + 
             #coord_cartesian(xlim=c(0, 5000)) + 
@@ -74,7 +73,7 @@ shinyServer(function(input, output, session) {
                   legend.key.size = unit(1, 'cm'), 
                   legend.text = element_text(size = 13), 
                   title = element_text(size = 13)) + 
-            facet_wrap(~ vaporfly, labeller = label_both) 
+            facet_wrap(~ vaporfly, labeller = label_both) # try aes_string(facet_wrap(~ input$hist_pred))
         
         sum_data <- plotdata %>% group_by(marathon, sex, vaporfly) %>% 
             summarise(Average = mean(time_minutes))
@@ -93,7 +92,7 @@ shinyServer(function(input, output, session) {
                   title = element_text(size = 13)) + 
             coord_flip()
         
-        # generate different barplots based on input$barplots_3 from ui.R in radioButtons
+        # generate different plots based on input$plot_type from ui.R in radioButtons
         if(input$plot_type == "Boxplot"){
             
             box_plot
@@ -334,6 +333,13 @@ shinyServer(function(input, output, session) {
                         se.fit = TRUE)
         paste("The average running time of the marathon runner is", round(temp, 2), "minutes.", sep = " ")
         
+    })
+    output$info <- renderUI({
+        
+        text <- paste0("You are making a prediction on the performance of an athlete who is a ", input$pred_sex, 
+                       ", wore ", input$pred_vaporfly, " Vaporfly-series running shoes and ran ", input$pred_mara, 
+                       " course in ", input$pred_year, ".")
+        h4(strong(text))
     })
 ################################ DATA page ##########################################################    
     getData <- reactive( {

@@ -209,7 +209,8 @@ shinyUI(
                                          br(),
                                          p(strong("Make sure the values of the tuning parameters and others are set for 
                                          regression tree and random forest models as well.", style = "color:red;")),
-                                         h5("Click on \"Submit\" button below to run all 3 models"),
+                                         br(),
+                                         h4(strong("Click on \"Submit\" button below to run all 3 models")),
                                          actionButton("submit_mlr", "Submit")
                                      ),
                                      # Show a plot of the generated distribution
@@ -295,7 +296,8 @@ shinyUI(
                                                                "Regression Tree", 
                                                                "Random Forest"),
                                                    selected = character(0)),
-                                      h4("Select predictors' value to predict for marathon athletes' average finishing time:"),
+                                      uiOutput("info"),
+                                      #h5("Select predictors' value to predict for marathon athletes' average finishing time:"),
                                       selectInput("pred_sex", label = "Gender",
                                                   choices = unique(shoes_data$sex), 
                                                   selected = character(0)),
@@ -308,8 +310,8 @@ shinyUI(
                                       selectInput("pred_mara", label = "Marathon", 
                                                   choices = unique(shoes_data$marathon),
                                                   selected = "Boston Marathon"),
+                                      h4(strong("Press the button below to make a prediction!"), style = "color:blue;"),
                                       actionButton("submit_model", "Predict!")
-                                      # line break
                                   ),
                                   mainPanel(
                                       #plotOutput("rf.varimportance"),
@@ -339,7 +341,7 @@ shinyUI(
                                         multiple = TRUE),
                          br(),
                          h4("Save the subsetted dataset to a .csv file"),
-                         actionButton("saveData", "Download!")
+                         actionButton("saveData", "Save the data!")
                          #downloadButton("downloadData", "Download")
                  
                      ),
