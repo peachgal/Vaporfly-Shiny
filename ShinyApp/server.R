@@ -27,12 +27,10 @@ shoes_data$vaporfly <- cut(shoes_data$vaporfly, 2, c("No", "Yes"))
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
 
-    plotdata <- shoe %>% filter(vaporfly != "NA")
-    
     output$summarytable <- renderDataTable({
         
         var <- input$summarise # connect to  selectInput - internal name
-        table_data <- plotdata[, c("vaporfly", "time_minutes", var), drop = FALSE]
+        table_data <- shoes_data[, c("vaporfly", "time_minutes", var), drop = FALSE]
         summ_data <- aggregate(time_minutes ~ vaporfly + table_data[[var]], data = table_data, FUN = mean)
         #summ_data <- table_data %>% group_by(vaporfly, var) %>% summarise(Average = mean(time_minutes))
         summ_data2 <- data.frame(summ_data[, -3], round(summ_data[, 3], 4))
@@ -44,8 +42,6 @@ shinyServer(function(input, output, session) {
     })
 ################################# PLOT ###################################################################################
     output$myplot <- renderPlot({
-        
-        plotdata <- shoe %>% filter(vaporfly != "NA")
         
         box_plot <- ggplot(data = shoes_data, aes(x = !!sym(input$boxp_pred), y = time_minutes)) + 
             geom_boxplot(fill = "white") + 
@@ -75,7 +71,7 @@ shinyServer(function(input, output, session) {
                   title = element_text(size = 13)) + 
             facet_wrap(~ vaporfly, labeller = label_both) # try aes_string(facet_wrap(~ input$hist_pred))
         
-        sum_data <- plotdata %>% group_by(marathon, sex, vaporfly) %>% 
+        sum_data <- shoes_data %>% group_by(marathon, sex, vaporfly) %>% 
             summarise(Average = mean(time_minutes))
         
         bar_plot <- ggplot(data = sum_data, aes(x = sex, y = Average, fill = vaporfly)) + 

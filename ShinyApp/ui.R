@@ -206,7 +206,7 @@ shinyUI(
                                                      value = 0.70,
                                                      step = 0.01),
                                          
-                                         checkboxInput("mlr_year", "Add one more predictor - Year?"),
+                                         #checkboxInput("mlr_year", "Add one more predictor - Year?"),
                                          br(),
                                          p(strong("Make sure the values of the tuning parameters and others are set for 
                                          regression tree and random forest models as well.", style = "color:red;")),
