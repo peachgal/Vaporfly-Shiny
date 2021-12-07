@@ -191,7 +191,8 @@ shinyUI(
                                 than the linear models or the single tree models.")
                      ),
                      
-################################ Model Fitting ################################################################ 
+################################ Multiple Linear Regression ############################################################## 
+
                      tabPanel("Model Fitting", fluid = TRUE,
                          tabsetPanel(
                              tabPanel("Multiple Linear Rregression", fluid = TRUE,
@@ -326,18 +327,16 @@ shinyUI(
                  )
                  
         ),
+################################## Data & download Data ####################################################################
         tabPanel(strong("Data"), fluid = TRUE,
                  sidebarLayout(
                      sidebarPanel(
-                         h4("Scroll through the data set "), 
-                         h5("You can subset the data set (columns and rows)."),
+                         h4("You can subset the data set."),
                          
-                         # Default is the first one keyed in, "Just Classification"
                          h5("You can select the ", strong("variable(s)/column(s)"), " you would like to view below:"),
                          
-                         # Create a drop-down bar, default is age
                          varSelectInput("variable", label = "Variables to show:", 
-                                        shoe,
+                                        shoes_data,
                                         multiple = TRUE),
                          br(),
                          h4("Save the subsetted dataset to a .csv file"),

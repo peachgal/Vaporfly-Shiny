@@ -42,7 +42,7 @@ shinyServer(function(input, output, session) {
         summ_data2
 
     })
-    
+################################# PLOT ###################################################################################
     output$myplot <- renderPlot({
         
         plotdata <- shoe %>% filter(vaporfly != "NA")
@@ -345,10 +345,10 @@ shinyServer(function(input, output, session) {
     getData <- reactive( {
         
         if(length(input$variable) == 0) {
-            return(shoe)
+            return(shoes_data)
             } else { 
                 
-                newData <- shoe %>% dplyr::select(!!!input$variable)
+                newData <- shoes_data %>% dplyr::select(!!!input$variable)
                 newData
                     
             } 
