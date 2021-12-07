@@ -216,14 +216,22 @@ shinyUI(
                                          #                                    c("Vaporfly & Gender", "Marathon & Gender"), 
                                          #                                    selected = NULL)),
                                          #vaporfly:sex + sex:marathon + vaporfly:year 
-                                         checkboxGroupInput("interact", "Interaction term(s):",
-                                                            c("Vaporfly & Gender", "Marathon & Gender"), 
-                                                            selected = "Vaporfly & Gender"),
+                                         #checkboxGroupInput("interact", "Interaction term(s):",
+                                         #                   c("Vaporfly & Gender", "Marathon & Gender"), 
+                                         #                   selected = "Vaporfly & Gender"),
+                                         checkboxInput("inter_act","Want to include interaction term(s)?"),
+                                         conditionalPanel(condition = "input.inter_act", 
+                                                          radioButtons("interact", "Interaction term(s):",
+                                                                       c("Vaporfly & Gender", "Marathon & Gender", "Both"),
+                                                                       selected = "Vaporfly & Gender")),
+                                         #radioButtons("interact", "interaction term(s)?",
+                                         #             c("Vaporfly & Gender", "Marathon & Gender", "Both")),
                                          br(),
-                                         p(strong("Make sure the values of the tuning parameters and others are set for 
-                                         regression tree and random forest models as well.", style = "color:red;")),
+                                         p(strong("Set the values of the tuning parameters and others for 
+                                                  regression tree and random forest models on their pages and 
+                                                  click on the button below to run all 3 models.", style = "color:red;")),
                                          br(),
-                                         h4(strong("Click on \"Submit\" button below to run all 3 models")),
+                                         h4(strong("Click on \"Submit\" button below to run all 3 models"), style = "color:blue;"),
                                          actionButton("submit_mlr", "Submit")
                                      ),
                                      # Show a plot of the generated distribution
@@ -355,9 +363,10 @@ shinyUI(
                                                              selected = c("Female", "Male"))),
                          #conditionalPanel(condition = "input.variable.includes('year')", 
                          #                 sliderInput("select_year", "Filter Year(s)", 
-                         #                             )),
+                         #                             min = 2015, max = 2019, step = 10, 
+                         #                             value = c(2016, 2019))),
                          br(),
-                         h4("Save the subsetted dataset to a .csv file"),
+                         h4("Save the dataset to a .csv file"),
                          actionButton("saveData", "Save the data!")
                          #downloadButton("downloadData", "Download")
                  

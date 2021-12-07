@@ -156,7 +156,7 @@ shinyServer(function(input, output, session) {
         train <- shoes_data[vaporfly_index, ]
         test <- shoes_data[-vaporfly_index, ]
         
-        if(length(interact_term()) == 1 & interact_term() == "Vaporfly & Gender") {
+        if(input$inter_act & interact_term() == "Vaporfly & Gender") {
             
             mlr_fit <- train(time_minutes ~ . + vaporfly:sex, 
                              data=train,
@@ -165,7 +165,7 @@ shinyServer(function(input, output, session) {
                              preProcess = c("center", "scale"))
             summary(mlr_fit)
             
-        } else if(length(interact_term()) == 1 & interact_term() == "Marathon & Gender") {
+        } else if(input$inter_act & interact_term() == "Marathon & Gender") {
             
             mlr_fit <- train(time_minutes ~ . + marathon:sex, 
                              data=train,
@@ -174,7 +174,7 @@ shinyServer(function(input, output, session) {
                              preProcess = c("center", "scale"))
             summary(mlr_fit)
             
-        } else if(length(interact_term()) == 2) {
+        } else if(input$inter_act & interact_term() == "Both") {
             
             mlr_fit <- train(time_minutes ~ . + vaporfly:sex + marathon:sex, 
                              data=train,
@@ -183,7 +183,7 @@ shinyServer(function(input, output, session) {
                              preProcess = c("center", "scale"))
             summary(mlr_fit)
             
-        } else if( length(interact_term()) == 0 | is.null(interact_term()) ) { #length(interact_term()) == 0 or is.null(interact_term())
+        } else { #length(interact_term()) == 0 or is.null(interact_term())
             
             mlr_fit <- train(time_minutes ~ . , 
                              data=train,
