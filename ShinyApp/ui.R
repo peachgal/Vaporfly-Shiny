@@ -205,7 +205,8 @@ shinyUI(
                                  sidebarLayout(
                                      sidebarPanel(
                                          sliderInput("split",
-                                                     "Proportion of data split into training set",
+                                                     "Proportion of data split into training set. This is done once and is 
+                                                     used in all 3 models",
                                                      min = 0.45,
                                                      max = 0.85,
                                                      value = 0.70,
@@ -219,7 +220,7 @@ shinyUI(
                                          #checkboxGroupInput("interact", "Interaction term(s):",
                                          #                   c("Vaporfly & Gender", "Marathon & Gender"), 
                                          #                   selected = "Vaporfly & Gender"),
-                                         checkboxInput("inter_act","Want to include interaction term(s)?"),
+                                         checkboxInput("inter_act", strong("Want to include interaction term(s)?")),
                                          conditionalPanel(condition = "input.inter_act", 
                                                           radioButtons("interact", "Interaction term(s):",
                                                                        c("Vaporfly & Gender", "Marathon & Gender", "Both"),
@@ -278,7 +279,8 @@ shinyUI(
                              tabPanel("Random Forest", fluid = TRUE,
                                  sidebarLayout(
                                      sidebarPanel(
-                                         h5(strong("Random forest model takes a little longer to run than the rest. Be patient!")),
+                                         h5(strong("Random forest model takes a little longer to run than the rest. Be patient!
+                                                   A status bar is coming soon!"), style = "color:purple;"),
                                          br(),
                                          h5("The range of the tuning parameter set for cross-validation to run."),
                                          sliderInput("mtry",
