@@ -319,20 +319,29 @@ shinyServer(function(input, output, session) {
         row.names(reg.tree_table) <- c("Training set", "Test set")
         round(reg.tree_table, 4)
     })
-    
-    
-    
-    
+
 ####################### Random Forest #####################################################    
     
+    rfdata <- reactive( {
+        
+        if(length(input$predictor_rf) == 0 ) {
+            rfData <- shoes_data
+            rfData
+        } else {
+            
+            rfData <- shoes_data %>% select(time_minutes, vaporfly, !!!input$predictor_rf)
+            rfData
+        }
+        
+    })
     output$rf.varimportance <- renderPlot({
         
         set.seed(388588)
         
         
-        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
-        train <- shoes_data[vaporfly_index, ]
-        test <- shoes_data[-vaporfly_index, ]
+        vaporfly_index <- createDataPartition(rfdata()$vaporfly, p = data_split(), list = FALSE)
+        train <- rfdata()[vaporfly_index, ]
+        test <- rfdata()[-vaporfly_index, ]
         
         random_f <- train(time_minutes ~ . , data = train,
                           method = "rf",
@@ -349,9 +358,9 @@ shinyServer(function(input, output, session) {
         set.seed(388588)
         
 
-        vaporfly_index <- createDataPartition(shoes_data$vaporfly, p = data_split(), list = FALSE)
-        train <- shoes_data[vaporfly_index, ]
-        test <- shoes_data[-vaporfly_index, ]
+        vaporfly_index <- createDataPartition(rfdata()$vaporfly, p = data_split(), list = FALSE)
+        train <- rfdata()[vaporfly_index, ]
+        test <- rfdata()[-vaporfly_index, ]
         
         random_f <- train(time_minutes ~ . , data = train,
                           method = "rf",
