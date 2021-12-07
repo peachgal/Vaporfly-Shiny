@@ -210,8 +210,15 @@ shinyUI(
                                                      max = 0.85,
                                                      value = 0.70,
                                                      step = 0.01),
-                                         
-                                         #checkboxInput("mlr_year", "Add one more predictor - Year?"),
+                                         #checkboxInput("inter_act","Want to include interaction term(s)?"),
+                                         #conditionalPanel(condition = "input.inter_act", 
+                                         #                 checkboxGroupInput("interact", "Interaction term(s):",
+                                         #                                    c("Vaporfly & Gender", "Marathon & Gender"), 
+                                         #                                    selected = NULL)),
+                                         #vaporfly:sex + sex:marathon + vaporfly:year 
+                                         checkboxGroupInput("interact", "Interaction term(s):",
+                                                            c("Vaporfly & Gender", "Marathon & Gender"), 
+                                                            selected = "Vaporfly & Gender"),
                                          br(),
                                          p(strong("Make sure the values of the tuning parameters and others are set for 
                                          regression tree and random forest models as well.", style = "color:red;")),
@@ -346,6 +353,9 @@ shinyUI(
                                           checkboxGroupInput("select_sex", "Filter a Gender Type:",
                                                              c("Female", "Male"),
                                                              selected = c("Female", "Male"))),
+                         #conditionalPanel(condition = "input.variable.includes('year')", 
+                         #                 sliderInput("select_year", "Filter Year(s)", 
+                         #                             )),
                          br(),
                          h4("Save the subsetted dataset to a .csv file"),
                          actionButton("saveData", "Save the data!")

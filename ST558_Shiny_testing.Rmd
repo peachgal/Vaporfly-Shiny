@@ -161,7 +161,7 @@ reg.tree.test_rmse <- postResample(pred_reg.tree, obs = testTrans4$time_minutes)
 reg.tree.train_rmse
 reg.tree.test_rmse
 plot(regress_tree$finalModel, uniform = TRUE, main = "Regression Tree Fit")
-text(regress_tree$finalModel, digits = 3, all = TRUE, use.n = TRUE)
+#text(regress_tree$finalModel, digits = 3, all = TRUE, use.n = TRUE)
 
 ```
 

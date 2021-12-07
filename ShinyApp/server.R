@@ -127,6 +127,10 @@ shinyServer(function(input, output, session) {
         input$split
 
     })
+    interact_term <- eventReactive(input$submit_mlr, {
+        
+        input$interact
+    })
     tune_cp <- eventReactive(input$submit_mlr, {
         
         input$cp
@@ -152,14 +156,53 @@ shinyServer(function(input, output, session) {
         train <- shoes_data[vaporfly_index, ]
         test <- shoes_data[-vaporfly_index, ]
         
-        mlr_fit <- train(time_minutes ~ . , 
-                         data=train,
-                         method = "lm",
-                         trControl = trainControl(method = "cv", number = tune_cv()),
-                         preProcess = c("center", "scale"))
-        summary(mlr_fit)
+        if(length(interact_term()) == 1 & interact_term() == "Vaporfly & Gender") {
+            
+            mlr_fit <- train(time_minutes ~ . + vaporfly:sex, 
+                             data=train,
+                             method = "lm",
+                             trControl = trainControl(method = "cv", number = tune_cv()),
+                             preProcess = c("center", "scale"))
+            summary(mlr_fit)
+            
+        } else if(length(interact_term()) == 1 & interact_term() == "Marathon & Gender") {
+            
+            mlr_fit <- train(time_minutes ~ . + marathon:sex, 
+                             data=train,
+                             method = "lm",
+                             trControl = trainControl(method = "cv", number = tune_cv()),
+                             preProcess = c("center", "scale"))
+            summary(mlr_fit)
+            
+        } else if(length(interact_term()) == 2) {
+            
+            mlr_fit <- train(time_minutes ~ . + vaporfly:sex + marathon:sex, 
+                             data=train,
+                             method = "lm",
+                             trControl = trainControl(method = "cv", number = tune_cv()),
+                             preProcess = c("center", "scale"))
+            summary(mlr_fit)
+            
+        } else if( length(interact_term()) == 0 | is.null(interact_term()) ) { #length(interact_term()) == 0 or is.null(interact_term())
+            
+            mlr_fit <- train(time_minutes ~ . , 
+                             data=train,
+                             method = "lm",
+                             trControl = trainControl(method = "cv", number = tune_cv()),
+                             preProcess = c("center", "scale"))
+            summary(mlr_fit)
+        }
+        
+        #mlr_fit <- train(time_minutes ~ . , 
+        #                 data=train,
+        #                 method = "lm",
+        #                 trControl = trainControl(method = "cv", number = tune_cv()),
+        #                 preProcess = c("center", "scale"))
+        #summary(mlr_fit)
 
     })
+    `%!in%` <- Negate(`%in%`)
+    
     output$mlr_rmse <- renderDataTable({
         
         set.seed(388588)
@@ -167,11 +210,48 @@ shinyServer(function(input, output, session) {
         train <- shoes_data[vaporfly_index, ]
         test <- shoes_data[-vaporfly_index, ]
         
-        mlr_fit <- train(time_minutes ~ . , 
-                         data=train,
-                         method = "lm",
-                         trControl = trainControl(method = "cv", number = tune_cv()),
-                         preProcess = c("center", "scale"))
+        if(length(interact_term()) == 1 & interact_term() == "Vaporfly & Gender") {
+            
+            mlr_fit <- train(time_minutes ~ . + vaporfly:sex, 
+                             data=train,
+                             method = "lm",
+                             trControl = trainControl(method = "cv", number = tune_cv()),
+                             preProcess = c("center", "scale"))
+            mlr_fit
+            
+        } else if(length(interact_term()) == 1 & interact_term() == "Marathon & Gender") {
+            
+            mlr_fit <- train(time_minutes ~ . + marathon:sex, 
+                             data=train,
+                             method = "lm",
+                             trControl = trainControl(method = "cv", number = tune_cv()),
+                             preProcess = c("center", "scale"))
+            mlr_fit
+            
+        } else if(length(interact_term()) == 2) {
+            
+            mlr_fit <- train(time_minutes ~ . + vaporfly:sex + marathon:sex, 
+                             data=train,
+                             method = "lm",
+                             trControl = trainControl(method = "cv", number = tune_cv()),
+                             preProcess = c("center", "scale"))
+            mlr_fit
+            
+        } else if(length(interact_term()) == 0) {
+            
+            mlr_fit <- train(time_minutes ~ . , 
+                             data=train,
+                             method = "lm",
+                             trControl = trainControl(method = "cv", number = tune_cv()),
+                             preProcess = c("center", "scale"))
+            mlr_fit
+        }
+        
+        #mlr_fit <- train(time_minutes ~ . , 
+        #                 data=train,
+        #                 method = "lm",
+        #                 trControl = trainControl(method = "cv", number = tune_cv()),
+        #                 preProcess = c("center", "scale"))
         
         test_pred_mlr <- predict(mlr_fit, newdata = test)
         train_pred_mlr <- predict(mlr_fit, newdata = train)
