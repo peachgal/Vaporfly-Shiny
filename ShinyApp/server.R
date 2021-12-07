@@ -350,16 +350,21 @@ shinyServer(function(input, output, session) {
 ################################ DATA page ##########################################################    
     getData <- reactive( {
         
-        if(length(input$variable) == 0) {
+        if(length(input$variable) == 0 ) {
             return(shoes_data)
-            } else { 
+            } else if(length(input$select_sex) == 1) { 
+                
+                newData <- shoes_data %>% dplyr::select(!!!input$variable) %>% filter(sex == input$select_sex)
+                newData
+                    
+            } else {
                 
                 newData <- shoes_data %>% dplyr::select(!!!input$variable)
                 newData
-                    
-            } 
+            }
             
     })
+    
     output$datatable <- renderDataTable({
         
         shoeData <- getData()
