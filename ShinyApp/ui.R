@@ -302,8 +302,7 @@ shinyUI(
                                                                "Regression Tree", 
                                                                "Random Forest"),
                                                    selected = character(0)),
-                                      uiOutput("info"),
-                                      #h5("Select predictors' value to predict for marathon athletes' average finishing time:"),
+                                      h4(strong("Athlete's criteria for Prediction:")),
                                       selectInput("pred_sex", label = "Gender",
                                                   choices = unique(shoes_data$sex), 
                                                   selected = character(0)),
@@ -322,15 +321,12 @@ shinyUI(
                                   mainPanel(
                                       #plotOutput("rf.varimportance"),
                                       #verbatimTextOutput("rf.fit"),
+                                      uiOutput("info"),
                                       textOutput("prediction")
                                   )
                               )
-                      
                      )
-                     
-                     
                  )
-                 
         ),
 ################################## Data & download Data ####################################################################
         tabPanel(strong("Data"), fluid = TRUE,

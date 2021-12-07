@@ -300,7 +300,7 @@ shinyServer(function(input, output, session) {
         input$pred_mara
     })
     
-    output$prediction <- renderText( {
+    output$prediction <- renderPrint( {
         
         shoes_data
         if(which_model() == "Random Forest"){
@@ -337,12 +337,13 @@ shinyServer(function(input, output, session) {
                                              year = pred_var_year(), 
                                              marathon = pred_var_mara()), 
                         se.fit = TRUE)
-        paste("The average running time of the marathon runner is", round(temp, 2), "minutes.", sep = " ")
+        paste("The average finishing time of such an athlete is approximately ", round(temp, 2), "minutes.", sep = " ")
+        
         
     })
     output$info <- renderUI({
         
-        text <- paste0("You are making a prediction on the performance of an athlete who is a ", input$pred_sex, 
+        text <- paste0("You are making a prediction on the performance of a marathon athlete who is a ", input$pred_sex, 
                        ", wore ", input$pred_vaporfly, " Vaporfly-series running shoes and ran ", input$pred_mara, 
                        " course in ", input$pred_year, ".")
         h4(strong(text))
