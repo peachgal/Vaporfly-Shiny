@@ -205,6 +205,13 @@ shinyUI(
                                  
                                  sidebarLayout(
                                      sidebarPanel(
+                                         h4(strong("Click on \"Submit\" button below to run all 3 models"), style = "color:blue;"),
+                                         actionButton("submit_mlr", "Submit"),
+                                         h4(strong("Set the values of the tuning parameters and others for 
+                                                  regression tree and random forest models on their pages and 
+                                                  click on the button below to run all 3 models.", style = "color:red;")),
+                                         
+                                         br(),
                                          sliderInput("split",
                                                      "Proportion of data split into training set. This is done once and is 
                                                      used in all 3 models.",
@@ -212,6 +219,25 @@ shinyUI(
                                                      max = 0.85,
                                                      value = 0.70,
                                                      step = 0.01),
+                                         
+                                         h4("If NO predictors are selected, the model automatically includes all main effects.", 
+                                            strong("Vaporfly"), ", is automatically included in all 3 models because it is the study's 
+                                            main interest in relation to marathon performance of athletes.", 
+                                            style = "color:purple;"),
+                                         
+                                         varSelectInput("predictor_mlr", label = "Variable(s) to include in multiple linear regression model:", 
+                                                        shoes_data[-3:-4],
+                                                        multiple = TRUE),
+                                         #checkboxInput("inter_act", strong("Want to include interaction term(s)?")),
+                                         conditionalPanel(condition = "input.predictor_mlr.includes('sex')", 
+                                                          radioButtons("interact_sex", "Interaction term:",
+                                                                       c("Vaporfly & Gender", "No Interaction"),
+                                                                       selected = "No Interaction")),
+                                         
+                                         conditionalPanel(condition = "input.predictor_mlr.includes('sex') & input.predictor_mlr.includes('marathon')", 
+                                                          radioButtons("interact_mara", "Interaction term:",
+                                                                       c("Marathon & Gender", "No Interaction"),
+                                                                       selected = "No Interaction")),
                                          #checkboxInput("inter_act","Want to include interaction term(s)?"),
                                          #conditionalPanel(condition = "input.inter_act", 
                                          #                 checkboxGroupInput("interact", "Interaction term(s):",
@@ -221,25 +247,20 @@ shinyUI(
                                          #checkboxGroupInput("interact", "Interaction term(s):",
                                          #                   c("Vaporfly & Gender", "Marathon & Gender"), 
                                          #                   selected = "Vaporfly & Gender"),
-                                         h4(strong("4 predictors are included in MLR model:")), 
-                                            tags$li("Vaporfly shoes (Yes/No)"), 
+                                         h4(strong("1 predictor is included in MLR model by author:")),
+                                            tags$li("Vaporfly shoes (Yes/No)"),
+                                         h4(strong("5 terms can be added in MLR model by user:")), 
                                             tags$li("Gender (Female/Male)"), 
                                             tags$li("Year (2015-2019)"), 
-                                            tags$li("Marathon courses"),
-                                         checkboxInput("inter_act", strong("Want to include interaction term(s)?")),
-                                         conditionalPanel(condition = "input.inter_act", 
-                                                          radioButtons("interact", "Interaction term(s):",
-                                                                       c("Vaporfly & Gender", "Marathon & Gender", "Both"),
-                                                                       selected = "Vaporfly & Gender")),
-                                         #radioButtons("interact", "interaction term(s)?",
-                                         #             c("Vaporfly & Gender", "Marathon & Gender", "Both")),
-                                         br(),
-                                         h4(strong("Set the values of the tuning parameters and others for 
-                                                  regression tree and random forest models on their pages and 
-                                                  click on the button below to run all 3 models.", style = "color:red;")),
-                                         br(),
-                                         h4(strong("Click on \"Submit\" button below to run all 3 models"), style = "color:blue;"),
-                                         actionButton("submit_mlr", "Submit")
+                                            tags$li("Marathon course"),
+                                            tags$li("Vaporfly & Gender interaction"),
+                                            tags$li("Marathon & Gender interaction"),
+                                         #checkboxInput("inter_act", strong("Want to include interaction term(s)?")),
+                                         #conditionalPanel(condition = "input.inter_act", 
+                                         #                 radioButtons("interact", "Interaction term(s):",
+                                         #                              c("Vaporfly & Gender", "Marathon & Gender", "Both"),
+                                         #                              selected = "Vaporfly & Gender")),
+                                         
                                      ),
                                      # Show a plot of the generated distribution
                                      mainPanel(
@@ -258,8 +279,8 @@ shinyUI(
                                       sidebarLayout(
                                           sidebarPanel(
                                               h4("If NO predictors are selected, the model will automatically include all predictors. Tree 
-                                                 models automatically account for interactions of predictors in the model. Predictor, ", 
-                                                 strong("vaporfly"), " is automatically included in all 3 models because it is the study's 
+                                                 models automatically account for interactions of predictors in the model.", 
+                                                 strong("Vaporfly"), ", is automatically included in all 3 models because it is the study's 
                                                  main interest in relation to marathon performance of athletes."),
                                               
                                               varSelectInput("predictor_rt", label = "Variable(s) to include in regression tree model:", 
@@ -276,7 +297,13 @@ shinyUI(
                                                           "Cross-Validation Fold",
                                                           min = 1,
                                                           max = 15,
-                                                          value = 10)
+                                                          value = 10),
+                                              h4(strong("1 predictor is included in the model by author:")),
+                                              tags$li("Vaporfly shoes (Yes/No)"),
+                                              h4(strong("3 predictors can be added in the model by user:")), 
+                                              tags$li("Gender (Female/Male)"), 
+                                              tags$li("Year (2015-2019)"), 
+                                              tags$li("Marathon course")
                                               
                                           ),
                                           # Show a plot of the generated distribution
@@ -295,11 +322,11 @@ shinyUI(
                                      sidebarPanel(
                                          h4(strong("Random forest model takes a little longer to run than the rest. Please be patient!"), 
                                             style = "color:purple;"),
-                                         br(),
+                                         
                                          h4("If NO predictors are selected, the model will automatically include all predictors. Tree 
-                                                 models automatically account for interactions of predictors in the model. Predictor, ", 
-                                            strong("vaporfly"), " is automatically included in all 3 models because it is the study's 
-                                                 main interest in relation to marathon performance of athletes."),
+                                            models automatically account for interactions of predictors in the model.", 
+                                            strong("Vaporfly"), ", is automatically included in all 3 models because it is the study's 
+                                            main interest in relation to marathon performance of athletes."),
                                          
                                          varSelectInput("predictor_rf", label = "Variable(s) to include in random forest model:", 
                                                         shoes_data[-3:-4],
@@ -316,7 +343,13 @@ shinyUI(
                                                      "Cross-Validation Fold",
                                                      min = 1,
                                                      max = 6,
-                                                     value = 5)
+                                                     value = 5),
+                                         h4(strong("1 predictor is included in the model by author:")),
+                                         tags$li("Vaporfly shoes (Yes/No)"),
+                                         h4(strong("3 predictors can be added in MLR model by user:")), 
+                                         tags$li("Gender (Female/Male)"), 
+                                         tags$li("Year (2015-2019)"), 
+                                         tags$li("Marathon course"),
                                          
                                          ),
                                      # Show a plot of the generated distribution
