@@ -207,9 +207,9 @@ shinyUI(
                                      sidebarPanel(
                                          h4(strong("Click on \"Submit\" button below to run all 3 models"), style = "color:blue;"),
                                          actionButton("submit_mlr", "Submit"),
-                                         h4(strong("Set the values of the tuning parameters and others for 
-                                                  regression tree and random forest models on their pages and 
-                                                  click on the button below to run all 3 models.", style = "color:red;")),
+                                         h4("Please choose model settings for each model on its own page and click on the button 
+                                            above to run all 3 models.", style = "color:blue;"), 
+                                         h4(strong("Click on \"Submit\" AGAIN if errors show up!!!"), style = "color:red;"),
                                          
                                          br(),
                                          sliderInput("split",

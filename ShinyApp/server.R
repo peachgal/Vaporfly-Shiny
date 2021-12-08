@@ -167,6 +167,29 @@ shinyServer(function(input, output, session) {
             mlrData
         }
     })
+    observeEvent(input$submit_mlr, { 
+        
+        if("marathon" %!in% names(mlrdata() ) ) { 
+            
+            updateRadioButtons(session, "interact_mara", selected = "No Interaction")
+            
+        } else {
+            
+            updateRadioButtons(session, "interact_mara", selected = NULL)
+        }   
+    })
+            
+    observeEvent( input$submit_mlr, {        
+                    
+         if("sex" %!in% names(mlrdata() ) ) { 
+            
+            updateRadioButtons(session, "interact_sex", selected = "No Interaction")
+            
+        } else { 
+            
+            updateRadioButtons(session, "interact_sex", selected = NULL) 
+        }
+    })
     
     `%!in%` <- Negate(`%in%`)
     
