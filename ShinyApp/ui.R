@@ -39,18 +39,25 @@ shinyUI(
                    and select the choices they want in EDA, model building, model fitting and prediction in the App."),
                  br(),
                  h3(strong("About the Data")), 
-                 p("Ever since Nike released a series of new running shoes called the Vaporfly, it has made a huge impact in 
-                   the marathon running community. Several studies are done and have reported dramatic speed improvements for 
+                 p("Ever since Nike released a series of new running shoes called the Vaporfly in 2016, it has made a huge impact 
+                   in the marathon running community. Several studies have done and  reported dramatic marathon improvements for 
                    athletes wearing these shoes. Hence, the study collected marathon performance data from a group of 
-                   athletes participating in different marathon courses over the period of 2015 to 2019. The data consists of 
+                   athletes participating in different marathon courses from 2015 to 2019. The data consists of 
                    the athletes' names, marathon courses he/she ran, the year and the date when he/she ran the marathon, 
                    whether or not they were wearing the Vaporfly series shoes when they ran the course, the gender and the 
-                   age of the athletes, and most importantly, the times the athletes used to finish the specific race. The 
-                   study was interested in whether the athletes made a significant performance improvement or not by wearing 
-                   the Nike Vaporfly shoes."),
-                 p("More about the data can be found via ",
-                    a(href="https://www.researchers.one/article/2020-02-14", "this link"), #target="_blank"
-                    ", \"an observational study of the effect of Nike Vaporfly running shoes on marathon performance\"."), 
+                   age of the athletes, and most importantly, the times the athletes used to finish the race. The 
+                   study was interested in whether the athletes made a significant performance improvement by wearing 
+                   the Nike Vaporfly running shoes or not."),
+                 
+                 p("The objective of the study is to determine the magnitude of the improvement and whether the improvement varies 
+                   across (1) Vaporfly shoes, (2) gender and/or (3) marathon course. More about the study can be found via ",
+                   a(href="https://www.researchers.one/article/2020-02-14", "this link"), #target="_blank"
+                   ", \"an observational study of the effect of Nike Vaporfly running shoes on marathon performance\". There are 
+                   1,690 observations in the data. However, 72 observations are removed from the analysis in the Shiny App due to 
+                   missing values in ", strong("varporfly"), " variable. Therefore, the total observations used in the analysis are 1,618. 
+                   Our response variable is ", strong("time_minutes"), ", and there are four predictors variables: ", 
+                   strong("marathon"), ", ",  strong("sex"), ", ", strong("vaporfly"), " and ", strong("year"), "."),
+                 
                  br(),
                  h3(strong("Purpose of the tabs in the APP")), 
                     # When click on the hyperlink, hyperlink opens on the same browser, not a new window

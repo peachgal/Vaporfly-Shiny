@@ -572,18 +572,6 @@ shinyServer(function(input, output, session) {
             }
     })
     
-    #mlrdata <- reactive( {
-        
-    #    if(length(mlr_var() ) == 0 ) {
-    #        mlrData <- shoes_data
-    #        mlrData
-    #    } else {
-            
-    #        mlrData <- shoes_data %>% select(time_minutes, vaporfly, !!!mlr_var() )
-    #        mlrData
-    #    }
-    #})
-
     observeEvent(input$variable, { 
         
         if("sex" %!in% names(getData() ) ) { 
