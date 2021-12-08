@@ -112,10 +112,10 @@ shinyServer(function(input, output, session) {
         
     })
     
-    output$text1 <- renderUI({
+    output$mlr.formula <- renderUI({
         
         withMathJax(
-            helpText('The general form is
+            helpText('The general form is 
                      $$y=\\beta_0+\\beta_1{x_1}+\\beta_2{x_2}+\\beta_3{x_2^2}+\\beta_4{x_1}{x_2^2}+...+\\epsilon$$')
         )
     })

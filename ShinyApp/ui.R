@@ -140,7 +140,7 @@ shinyUI(
                                 for example, polynomial forms or interaction terms. In short, multiple linear regression is 
                                 the extension of simple linear regression model because it involves more than one explanatory 
                                 variable. "),
-                              uiOutput("text1"),
+                              uiOutput("mlr.formula"),
                               h4("Advantage"),
                               p("Linear regression models are easy to understand and interpret. Furthermore, regression models 
                                 can be trained efficiently with low computational power compared to other complex algorithms. They 
@@ -410,9 +410,6 @@ shinyUI(
                          varSelectInput("variable", label = "Variables to show:", 
                                         shoes_data,
                                         multiple = TRUE),
-                         #checkboxGroupInput("variable", label = "Variable(s) to show:",
-                         #                   choices = colnames(shoes_data),
-                         #                   selected = NULL),
                          conditionalPanel(condition = "input.variable.includes('sex')",
                                           checkboxGroupInput("select_sex", "Filter a Gender Type:",
                                                              c("Female", "Male"),
