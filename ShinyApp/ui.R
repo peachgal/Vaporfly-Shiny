@@ -210,8 +210,7 @@ shinyUI(
                                          actionButton("submit_mlr", "Submit"),
                                          h4("Please choose model settings for each model on its own page and click on the button 
                                             above to run all 3 models.", style = "color:blue;"), 
-                                         h4(strong("Click on \"Submit\" AGAIN if errors show up!!!"), style = "color:red;"),
-                                         
+                                         #h4(strong("Click on \"Submit\" AGAIN if errors show up!!!"), style = "color:red;"),
                                          br(),
                                          sliderInput("split",
                                                      "Proportion of data split into training set. This is done once and is 
@@ -407,11 +406,19 @@ shinyUI(
                          
                          h5("You can select the ", strong("variable(s)/column(s)"), " you would like to view below:"),
                          
-                         varSelectInput("variable", label = "Variables to show:", 
-                                        shoes_data,
-                                        multiple = TRUE),
-                         conditionalPanel(condition = "input.variable.includes('sex')",
-                                          checkboxGroupInput("select_sex", "Filter a Gender Type:",
+                         #varSelectInput("variable", label = "Variables to show:", 
+                         #               shoes_data,
+                         #               multiple = TRUE),
+                         checkboxGroupInput("variable", label = "Variables to show:",
+                                            choices = c("vaporfly", "time_minutes", "marathon", "year", "sex"), 
+                                            selected = c("vaporfly", "time_minutes", "marathon", "year", "sex")),
+                         #conditionalPanel(condition = "input.variable.includes('sex')",
+                         #                 checkboxGroupInput("select_sex", "Filter a Gender Type:",
+                         #                                    c("Female", "Male"),
+                         #                                    selected = c("Female", "Male"))),
+                         h5(strong("Filter the observations:")),
+                         conditionalPanel(condition = "input.variable.includes('sex')", 
+                                          checkboxGroupInput("select_sex", "Filter a Gender Type:", 
                                                              c("Female", "Male"),
                                                              selected = c("Female", "Male"))),
                          #conditionalPanel(condition = "input.variable.includes('year')", 
@@ -420,7 +427,7 @@ shinyUI(
                          #                             value = c(2016, 2019))),
                          br(),
                          h4("Save the dataset to a .csv file"),
-                         actionButton("saveData", "Save the dataet!")
+                         actionButton("saveData", "Save the dataset!")
                          #downloadButton("downloadData", "Download")
                  
                      ),
