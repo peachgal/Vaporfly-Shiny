@@ -229,7 +229,7 @@ shinyUI(
                                          varSelectInput("predictor_mlr", label = "Variable(s) to include in multiple linear regression model:", 
                                                         shoes_data[-3:-4],
                                                         multiple = TRUE),
-                                         #checkboxInput("inter_act", strong("Want to include interaction term(s)?")),
+                                         
                                          conditionalPanel(condition = "input.predictor_mlr.includes('sex')", 
                                                           radioButtons("interact_sex", "Interaction term:",
                                                                        c("Vaporfly & Gender", "No Interaction"),
@@ -269,7 +269,6 @@ shinyUI(
                                          verbatimTextOutput("mlrfit"),
                                          dataTableOutput("mlr_rmse")
                                      )
-                                     
                                  )
                              ),
                              
@@ -421,7 +420,7 @@ shinyUI(
                          #                             value = c(2016, 2019))),
                          br(),
                          h4("Save the dataset to a .csv file"),
-                         actionButton("saveData", "Save the data!")
+                         actionButton("saveData", "Save the dataet!")
                          #downloadButton("downloadData", "Download")
                  
                      ),
