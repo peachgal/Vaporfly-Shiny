@@ -22,7 +22,12 @@ shoes_data$year <- cut(shoes_data$year, 5, c("2015", "2016", "2017", "2018", "20
 shoes_data$vaporfly <- as.numeric(shoes_data$vaporfly)
 shoes_data$vaporfly <- cut(shoes_data$vaporfly, 2, c("No", "Yes"))
 # sum(is.na(shoes$age))
-# shoes$year <- cut(shoes$year, 5, c("2015", "2016", "2017", "2018", "2019"))
+
+summary_table <- shoes_data %>% group_by(marathon, sex, vaporfly) %>% summarise(average = mean(time_minutes))
+wide_data <- summary_table %>% pivot_wider(names_from = "vaporfly", values_from = "average")
+names(wide_data)[3] <- "Non_Vaporfly_times"
+names(wide_data)[4] <- "Vaporfly_times"
+scatter_data <- wide_data %>% filter(Vaporfly_times != "NA")
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
@@ -43,12 +48,29 @@ shinyServer(function(input, output, session) {
 ################################# PLOT ###################################################################################
     output$myplot <- renderPlot({
         
+        scatter <- ggplot(data = scatter_data, aes(x = Non_Vaporfly_times, y = Vaporfly_times, color = sex)) + 
+            geom_point(size = 5) + 
+            geom_abline(slope = 1, color = "blue") + 
+            scale_color_discrete(name = "Gender") + 
+            guides(color = guide_legend(override.aes = list(size = 8))) + 
+            #scale_shape_discrete(name = "") + 
+            coord_cartesian(xlim=c(130, 170), ylim=c(130, 170)) + 
+            labs(x = "Non-Vaporfly Times", y = "Vaporfly Times", 
+                 title = "Figure 1. Average finishing time for each marathon course") + 
+            theme(axis.text.x = element_text(size = 10), 
+                  axis.text.y = element_text(size = 10), 
+                  axis.title.x = element_text(size = 15), 
+                  axis.title.y = element_text(size = 15), 
+                  legend.key.size = unit(1, 'cm'), 
+                  legend.text = element_text(size = 13), 
+                  title = element_text(size = 13))
+        
         box_plot <- ggplot(data = shoes_data, aes(x = !!sym(input$boxp_pred), y = time_minutes)) + 
             geom_boxplot(fill = "white") + 
             geom_jitter(aes(color = sex, shape = vaporfly), size = 2) + 
             guides(color = guide_legend(override.aes = list(size = 8)), 
                    shape = guide_legend(override.aes = list(size = 8))) + 
-            labs(x = input$boxp_pred, y = "Time (minutes)", title = "Figure 1. Athletes' Marathon Finishing Times") + 
+            labs(x = input$boxp_pred, y = "Time (minutes)", title = "Figure 2. Athletes' Marathon Finishing Times") + 
             theme(axis.text.x = element_text(angle = 45, size = 10), 
                   axis.text.y = element_text(size = 10), 
                   axis.title.x = element_text(size = 15), 
@@ -61,7 +83,7 @@ shinyServer(function(input, output, session) {
         hist_gram <- ggplot(data = shoes_data, aes(x = time_minutes, fill = !!sym(input$hist_pred))) + #color = sex
             geom_histogram() + 
             #coord_cartesian(xlim=c(0, 5000)) + 
-            labs(x = "Time (minutes)", title = "Figure 2. Athletes' Marathon Finishing Times") + 
+            labs(x = "Time (minutes)", title = "Figure 3. Athletes' Marathon Finishing Times") + 
             theme(axis.text.x = element_text(size = 10), 
                   axis.text.y = element_text(size = 10), 
                   axis.title.x = element_text(size = 15), 
@@ -87,7 +109,7 @@ shinyServer(function(input, output, session) {
         bar_plot <- ggplot(data = summ_data, aes(x = !!sym(var), y = summ_data[[3]], fill = vaporfly)) + 
             geom_bar(stat = "identity", position = "dodge") + 
             labs(x = var, y = "Average Time (minutes)", 
-                 title = "Figure 3. Average finishing time for athletes wearing Vaporfly or not") + 
+                 title = "Figure 4. Average finishing time for athletes wearing Vaporfly or not") + 
             scale_fill_discrete(name = "Vaporfly", labels = c("No", "Yes")) + 
             theme(axis.text.x = element_text(size = 10), 
                   axis.text.y = element_text(size = 10), 
@@ -99,12 +121,17 @@ shinyServer(function(input, output, session) {
             coord_flip()
         
         # generate different plots based on input$plot_type from ui.R in radioButtons
-        if(input$plot_type == "Boxplot"){
+        if(input$plot_type == "Scatterplot") {
+            
+            scatter
+        } else if(input$plot_type == "Boxplot") {
             
             box_plot
-        } else if(input$plot_type == "Histogram"){
+            
+        } else if(input$plot_type == "Histogram") {
             
             hist_gram
+            
         } else {
             
             bar_plot

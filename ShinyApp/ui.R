@@ -90,13 +90,14 @@ shinyUI(
                    The users can also download and save the data set as a .csv file on their local machine if they choose."),
                  
         ),
+############################################################### Data Plot & Summary ##################################################    
         tabPanel(strong("Data Exploration"), fluid = TRUE,
                  sidebarLayout(
                      sidebarPanel(
                          radioButtons("plot_type",
                                      "Plot Type:",
-                                     choices = c("Boxplot", "Histogram", "Barplot"),
-                                     selected = character(0)),
+                                     choices = c("Scatterplot", "Boxplot", "Histogram", "Barplot"),
+                                     selected = "Scatterplot"),
                          conditionalPanel(condition = "input.plot_type == 'Boxplot'",
                                           selectInput("boxp_pred", 
                                                       "Variable on x-axis:", 
@@ -126,9 +127,9 @@ shinyUI(
                          plotOutput("myplot"),
                          dataTableOutput("summarytable")
                      )
-            
                 )
         ),
+###################################################### Model Information ########################################################        
         tabPanel(strong("Modeling"), fluid = TRUE, 
                  tabsetPanel(
                      tabPanel("Modeling Information", fluid = TRUE,
@@ -430,9 +431,5 @@ shinyUI(
                          dataTableOutput("datatable")
                      )
                  )
-                 
         )
-
-    # Sidebar with a slider input for number of bins
-
 )))
